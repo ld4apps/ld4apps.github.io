@@ -9,7 +9,7 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="Developing LDA Applications Apr 2nd, 2014 As with most technologies, the easiest way to get started is to look at a example. To help you get an idea &hellip;">
+  <meta name="description" content="Developing LDA Applications Apr 2nd, 2014 As with most technologies, the easiest way to get started is to look at an example. To help you get an &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -81,10 +81,10 @@
   
 
 
-<time datetime="2014-04-02T11:22:00-04:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2014</time></p>
+<time datetime="2014-04-02T13:45:00-04:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2014</time></p>
   </header>
   
-  <p>As with most technologies, the easiest way to get started is to look at a example. To help you get an idea of how LDA applications are implemented, we&rsquo;ll start with a very simple &lsquo;Todo List&rsquo; application from the <a href="https://github.com/ld4apps/lda-examples">lda-examples</a> repository. You should be able to understand the framework just by reading, but you might also like to install the software yourself and follow along in a more hands-on fashion. If so, refer to <a href="http://ld4apps.github.io/getting-started/index.html">Getting Started</a> before proceeding.</p>
+  <p>As with most technologies, the easiest way to get started is to look at an example. To help you get an idea of how LDA applications are implemented, we&rsquo;ll start with a very simple &lsquo;Todo List&rsquo; application from the <a href="https://github.com/ld4apps/lda-examples">lda-examples</a> repository. You should be able to understand the framework just by reading, but you might also like to install the software yourself and follow along in a more hands-on fashion. If so, refer to <a href="http://ld4apps.github.io/getting-started/index.html">Getting Started</a> before proceeding.</p>
 
 <p>Every LDA-based application requires a minimum of two files:</p>
 
@@ -189,9 +189,9 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>As you can see, the only difference is that instead of loading the single applications.html file, it consturcts and passes a simple type-to-file map, instucting the framework to load one of several (in this case 2) html files, depending on the (RDF) type of the resource being loaded. If the resource is a (todo) item, we load item.html to display the individual item. If the resource is a container, we load list.html to display the todo list iteself. This demonstrates the fundamental pattern that the LDA framework uses to implement <a href="http://ld4apps.github.io/lda-client-libraries/index.html">Single Page Applictions (SPAs)</a>. We&rsquo;ll look at the &lsquo;Todo List&rsquo; implementation in more detail below.</p>
+<p>As you can see, the only difference is that instead of loading the single applications.html file, it consturcts and passes a simple type-to-file map, instucting the framework to load one of several (in this case 2) html files, depending on the (RDF) type of the resource being loaded. If the resource is a (todo) item, we load item.html to display the individual item. If the resource is a container, we load list.html to display the todo list iteself. This demonstrates the fundamental pattern that the LDA framework uses to implement <a href="http://ld4apps.github.io/lda-client-libraries/index.html">Single Page Applictions (SPAs)</a>. We&rsquo;ll look at the &lsquo;Todo List&rsquo; client implementation in more detail below.</p>
 
-<p>The &lsquo;Todo List&rsquo; sample includes a couple of other things you will need if you want to play with the software.</p>
+<p>The &lsquo;Todo List&rsquo; sample includes a couple of other things any LDA application typically needs:</p>
 
 <ol>
 <li><p> A setup.py file &ndash; You can execute this server file with Python to download the python dependencies of the framework. [We do our best to minimize dependencies, but we do have a few. Currently they are: requests, webob, pycrypto, pymongo, isodate, python-dateutil, rdflib, and werkzeug. requests and webob are popular python libraries that implement functions for sending http requests and reading data from http inputs. pycrypto is a cryptography library that is only required if you are using the authentication feature. pymongo is the python client library for MongoDB. isodate and python-dateutil provide methods to help with Date formatting and parsing. rdflib allows us to support a broad range of RDF data formats without any work on the application developer&rsquo;s part. werkzeug is only used in the single-application development environment, and then only to serve static files.]</p></li>
@@ -201,25 +201,132 @@
 
 <h2>Hands-on</h2>
 
-<p>We will now go through a simple demo using the browser console to add and display todo items.</p>
+<p>We will now go through a simple demo using a browser to add and display todo items.</p>
 
-<p>The first thing to do is run the application in a command/shell window:</p>
+<p>The first thing to do is run the todo application server in a command/shell window:</p>
 
-<p><img src="images/image11.png" alt="" /></p>
+<p><img src="images/run.png" alt="" /></p>
 
-<p>localhost:3007/x - where x is any simple path segment &ndash; is the name of a container to which you can POST to create new resources, and which you can GET to see what you already have. [Of course, you can override all this default behavior if you want by writing Python code.] If you POST to localhost:3007/x, it will create a resource whose URL is localhost:3007/x/n.m, where n is the numerical id of the server copy that handles the request (a small monotonically-increasing number) and m is the numerical id of the resource (another monotonically-increasing number). Clients do not need to know this information &ndash; for them URLs should be opaque and anyway we may choose to change these rules on the server &ndash; but you as a server developer using the framework may be interested.</p>
+<p>At this point, you can go to a browser and enter the address &ldquo;localhost:3007/items&rdquo;. In the browser you will see something like this:</p>
 
-<p>At this point, you can go to a browser and enter the address &ldquo;localhost:3007/tt&rdquo;.</p>
+<p><img src="images/list1.png" alt="" /></p>
 
-<p>[tt is just the value of x we will use for this example &ndash; you can enter &ldquo;localhost:3007/x&rdquo; where x is anything you fancy. Normally you would be running behind a reverse proxy that is configured to only forward the values of x that you have chosen for your subsystems, but here we are running wide- open in development so you can enter anything.]</p>
+<p>You can add todo entries to the list by entering them in the text field and pressing the &lsquo;Add Todo Item&rsquo; button:</p>
 
-<p>In the browser you will see the following:</p>
+<p><img src="images/list2.png" alt="" /></p>
 
-<p><img src="images/image15.png" alt="" /></p>
+<p>Notice that each entry added to the list is also a clickable link. If you click on the first entry in the list you will see a (less than user-freindly) representation of that entry:</p>
 
-<p>The reason you see this text is that the application.html file currently looks like this:</p>
+<p><img src="images/item1.png" alt="" /></p>
 
-<p><img src="images/image16.png" alt="" /></p>
+<p>So, how is this application working? Let&rsquo;s start by looking at the html file that is loaded when we&rsquo;re looking at the todo list itself (that&rsquo;s lda-examples/todo/wsgi/static/todo/list.html, if you&rsquo;re looking at the project source):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">id=</span><span class="s">&quot;item&quot;</span> <span class="na">name=</span><span class="s">&quot;item&quot;</span> <span class="na">placeholder=</span><span class="s">&quot;What do you need to do?&quot;</span> <span class="na">style=</span><span class="s">&quot;width: 200px;&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;button&quot;</span> <span class="na">value=</span><span class="s">&quot;Add Todo Item&quot;</span> <span class="na">onClick=</span><span class="s">&quot;addItem();&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;hr&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;todoItems&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="nt">&lt;hr&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;script&gt;</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">appendItem</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">location</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;todoItems&quot;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">+=</span> <span class="s2">&quot;&lt;li&gt;&lt;a href=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">location</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&gt;&quot;</span> <span class="o">+</span> <span class="nx">item</span> <span class="o">+</span> <span class="s2">&quot;&lt;/a&gt;&lt;/li&gt;&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">displayItems</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="nx">APPLICATION_ENVIRON</span><span class="p">.</span><span class="nx">initial_simple_jso</span><span class="p">.</span><span class="nx">bp_members</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">appendItem</span><span class="p">(</span><span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">dc_title</span><span class="p">,</span> <span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">_subject</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">addItem</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">title</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;item&quot;</span><span class="p">).</span><span class="nx">value</span><span class="p">.</span><span class="nx">trim</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">title</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">item</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>        <span class="s2">&quot;_subject&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;dc_title&quot;</span><span class="o">:</span> <span class="nx">title</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;rdf_type&quot;</span><span class="o">:</span> <span class="s2">&quot;http://example.org/todo#Item&quot;</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">ld_util</span><span class="p">.</span><span class="nx">send_create</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">item</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">status</span> <span class="o">==</span> <span class="mi">201</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">location</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">getResponseHeader</span><span class="p">(</span><span class="s2">&quot;location&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">appendItem</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">dc_title</span><span class="p">,</span> <span class="nx">location</span><span class="p">);</span>
+</span><span class='line'>        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;item&quot;</span><span class="p">).</span><span class="nx">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// allow enter key to be pressed and act as submit</span>
+</span><span class='line'><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">).</span><span class="nx">onkeydown</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">event</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">==</span> <span class="mi">13</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">addItem</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="nx">displayItems</span><span class="p">();</span>
+</span><span class='line'><span class="nt">&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For anyone familiar with html/javascript programming, there should be nothing surprising here. This is very simple UI, intentionally written to use no fancy UI frameworks/libraries, other than the LDA clientlib. We have other samples that use UI frameworks to provide much nicer displays, but here we kept the example as simple as absolutely possible.</p>
 
 <p>However, if you look at the source of the page, you will see this:</p>
 
@@ -230,6 +337,10 @@
 <p>[If you turn off javascript in the browser, you will actually see the RDFa rendered. There is also an environment variable you can set on the server that will generate more elaborate RDFa that actually does render itself in a more readable way if Javascript is off. This will not give you a reasonable UI for your application, but it can be useful/amusing for debugging or pedagogical purposes.]</p>
 
 <p>Why do we do things this way? This approach allows a very clean separation of the server, which concerns itself only with business logic and data storage, and the user interface, which is implemented in HTML and javascript and which does not even have to reside on the same server as the business logic (we have run with the UI files on Amazon S3, for example).</p>
+
+<p>localhost:3007/x - where x is any simple path segment &ndash; is the name of a container to which you can POST to create new resources, and which you can GET to see what you already have. [Of course, you can override all this default behavior if you want by writing Python code.] If you POST to localhost:3007/x, it will create a resource whose URL is localhost:3007/x/n.m, where n is the numerical id of the server copy that handles the request (a small monotonically-increasing number) and m is the numerical id of the resource (another monotonically-increasing number). Clients do not need to know this information &ndash; for them URLs should be opaque and anyway we may choose to change these rules on the server &ndash; but you as a server developer using the framework may be interested.</p>
+
+<p>[&lsquo;items&rsquo; is just the value of x we will use for the todo example &ndash; you can actually enter &ldquo;localhost:3007/x&rdquo; where x is anything you fancy. Normally you would be running behind a reverse proxy that is configured to only forward the values of x that you have chosen for your subsystems, but here we are running wide- open in development so you can enter anything.]</p>
 
 <h3>Customizing the UI</h3>
 
@@ -345,7 +456,7 @@
   
 
 
-<time datetime="2014-04-02T11:22:00-04:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2014</time>
+<time datetime="2014-04-02T13:45:00-04:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2014</time>
         
       </p>
       
@@ -387,7 +498,7 @@
     
     	
         <li class="page">
-            <a href="/downloading-the-software/index.html">Downloading The Software</a>
+            <a href="/downloading-the-software/index.html">Downloading the Software</a>
         </li>
         
     
@@ -411,7 +522,7 @@
     
     	
         <li class="page">
-            <a href="/mpnally-tutorial/index.html">Original mpnally Tutorial</a>
+            <a href="/mpnally-tutorial/index.html">Original Mpnally Tutorial</a>
         </li>
         
     
@@ -420,7 +531,7 @@
     
     	
         <li class="page">
-            <a href="/what-is-this-rdf-thing/index.html">What is this RDF Thing?</a>
+            <a href="/what-is-this-rdf-thing/index.html">What Is This RDF Thing?</a>
         </li>
         
     
