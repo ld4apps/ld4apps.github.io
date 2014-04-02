@@ -1,16 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://ld4apps.github.io/blog/archives/</loc>
-        <lastmod>2014-04-01T14:34:05-04:00</lastmod>
+        <loc>http://ld4apps.github.io/blog/2014/04/02/hello-world/</loc>
+        <lastmod>2014-04-02T09:35:46-04:00</lastmod>
     </url>
     <url>
-        <loc>http://ld4apps.github.io/getting-started/</loc>
-        <lastmod>2014-04-01T14:34:05-04:00</lastmod>
+        <loc>http://ld4apps.github.io/blog/archives/</loc>
+        <lastmod>2014-04-02T09:35:46-04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ld4apps.github.io/blog/</loc>
+        <lastmod>2014-04-02T09:41:58-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/</loc>
-        <lastmod>2014-04-01T14:34:05-04:00</lastmod>
+        <lastmod>2014-04-02T09:09:59-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/lda-client-libraries/</loc>

@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Linked Data for Applications (LDA)</title>
+  <title>LDA - Linked Data for Applications - Linked Data for Applications (LDA)</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="Blog Archives Pages Blog Archive LDA - Linked Data For Applications lda client libraries Original mpnally Tutorial what is this rdf thing? Recent &hellip;">
+  <meta name="description" content="LDA - Linked Data for Applications Mar 28th, 2014 LDA is a light-weight framework that helps developers design and implement integrated
+systems &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -56,65 +57,255 @@
 </form>
   
 <ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/">Home</a></li>
+  <li><a href="/blog/">Blog</a></li>
+  <li><a href="/blog/archives/">Archives</a></li>
 </ul>
 
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">LDA - Linked Data for Applications</h1>
+    <p class="meta">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-28T09:04:00-04:00" pubdate data-updated="true">Mar 28<span>th</span>, 2014</time></p>
+  </header>
+  
+  <p>LDA is a light-weight framework that helps developers design and implement integrated
+systems composed of multiple applications that follow a REST model and can be deployed
+on clouds. An LDA-based application is a run-time subsystem whose communication with the
+outside world is entirely through HTTP/REST. This means that the applications
+(REST subsystems) cannot see each other directly. They can only see the resources they
+expose.</p>
+
+<p>The problem LDA is solving is not implementing individual applications &ndash; there are
+lots of technologies for that &ndash; but rather implementing a coherent system made up of
+many applications that talk to each other. Two other common approaches for solving
+this problem, a &lsquo;central repository&rsquo; approach and one that in recent years
+has come to be called &lsquo;SOA&rsquo;, have major scalability issues that we believe the LDA
+approach completely overcomes.</p>
+
+<p>The basic idea behind the use of Linked Data for integration is simple.
+We have seen that the regular HTML web is an extraordinary integrator.
+By embedding links &ndash; usually HTML anchor tags &ndash; inside pages, HTML
+enables the user of a browser to navigate to other pages without modifying
+those pages or constraining in any way how those pages are implemented &ndash; they
+don&rsquo;t even have to be HTML. This integration does not require any sort of
+coordination or contract between the owners of the referenced pages and the
+owner of the page that references them, except perhaps to demand that the URLs
+used to reference the pages should not change or disappear. This extraordinarily
+simple idea has allowed the world-wide web to freely integrate
+commerce sites, blogs and micro-blogs, music sites, video sites, social
+networking sites, government sites, news sites and so on.</p>
+
+<p>The basic idea of integration
+using Linked Data is that if you just substitute a data model
+(<a href="http://davetropeano.github.io/lda/what-is-this-rdf-thing/index.html">RDF</a>) for HTML and otherwise
+&lsquo;make like the world-wide web&rsquo;, then applications can achieve the same sort of easy and
+limitless integration that we see in the HTML web.
+To achieve this goal, ones need to implement client applications that &lsquo;make like a browser&rsquo;
+and server applications that expose everything as linked resources. The LDA
+framework provides server-side and a client-side components that make it easy to
+create applications that follow exactly that pattern.</p>
+
+<p>The server-side component is written in Python,
+about 75% of which could be ported to other languages to support application development in
+those languages. We have not yet done such ports, so currently you have to write server
+applications in Python to use our framework. The rest of the server code takes
+the form of subsystems that implement standard system functions &ndash; authentication,
+access control and multi-tenancy &ndash; that are accessed as HTTP resources and so can
+remain in Python even on a system that implements applications in other languages.</p>
+
+<p>LDA&rsquo;s client component consists of Javascript libraries containing helper methods
+for various common tasks. There is almost no framework code on the client &ndash; you can write
+your clients using whatever Javascript frameworks you like and still use the LDA libraries.
+The libraries simply make it easier to work with data from resources produced by LDA-based servers.</p>
+
+<h2>Getting Started</h2>
+
+<p>The easiest way to get started with LDA is to download the framework from github as follows:</p>
+
+<ol>
+<li>Create a working directory:</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>mkdir ldaprojects <span class="c"># pick your own name</span>
+</span><span class='line'><span class="nb">cd </span>ldaprojects
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>Clone the github repositories:</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>git clone https://github.com/davetropeano/lda-clientlib.git
+</span><span class='line'>git clone https://github.com/davetropeano/lda-serverlib.git
+</span><span class='line'>git clone https://github.com/davetropeano/lda-siteserver.git
+</span><span class='line'>git clone https://github.com/davetropeano/lda-examples.git
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The four github repositories are now available in the following subdirectories:</p>
+
+<ol>
+<li><a href="https://github.com/davetropeano/lda-clientlib/blob/master/README.md">lda-clientlib</a> &ndash; Javascript libraries for LDA client application development</li>
+<li><a href="https://github.com/davetropeano/lda-serverlib/blob/master/README.md">lda-serverlib</a> &ndash; Python libraries for LDA server application development</li>
+<li><a href="https://github.com/davetropeano/lda-siteserver/blob/master/README.md">lda-siteserver</a> &ndash; standard system functions for LDA applications &ndash; authentication, access control and multi-tenancy</li>
+<li><a href="https://github.com/davetropeano/lda-examples/blob/master/README.md">lda-examples</a> &ndash; LDA example applications</li>
+</ol>
+
+
+<p>There are several sample application in the <strong>lda-examples</strong> repository you can look at and run.
+Note that the 4 repositories must be downloaded in sibling directories as instructed above in order to run the examples.</p>
+
+<p>The LDA framework requires a running back-end database for storing the data and an adapter
+that matches the database to the REST/RDF assumptions of the application.
+The adapter currently available (in <strong>lda-serverlib</strong>) is for
+<a href="https://www.mongodb.org/">MongoDB</a>. Rather than installing and running MongoDB yourself,
+the <strong>lda-examples</strong> project includes a Vagrantfile that can be used to start a MongoDB server
+as well as an Nginx reverse proxy server, needed for some of the examples.</p>
+
+<p>Before you run the examples, you first need to download/install the following:</p>
+
+<ol>
+<li><a href="http://docs.vagrantup.com/v2/installation/">Vagrant</a></li>
+<li><a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a>
+
+<ul>
+<li>Make sure you have a VirtualBox Host-Only Network (IP address 192.168.56.1)
+configured (see <strong>Note 1</strong>, below).</li>
+</ul>
+</li>
+</ol>
+
+
+<p>Once Vagrant and VirtualBox are installed, execute the following commands:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>lda-examples
+</span><span class='line'>vagrant up
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point the database server is running and ready for you to start playing with the
+<a href="https://github.com/davetropeano/lda-examples">examples</a>.</p>
+
+<h3>Note 1. Configure VirtualBox Host-Only Network (IP address 192.168.56.1)</h3>
+
+<p>On some machines, the following steps are necessary to configure VirtualBox to work
+correctly for SetupShop. This definitely seems to be needed on Mac, but (some?) Windows
+machines seem to have this automatically (pre)configured.</p>
+
+<ol>
+<li>Start the VirtualBox app and select VirtualBox / Preferences&hellip;</li>
+<li>Click the &ldquo;Network&rdquo; tab.</li>
+<li>Click the &ldquo;Add host-only network (Ins)&rdquo; green plus button on the right to add &ldquo;vboxnet0&rdquo; to the list of Host-only Networks.</li>
+<li>Then click on the screwdriver icon on the right hand side to edit the vboxnet0 settings.</li>
+<li>Accept the default IP address (192.168.56.1) settings on the Adapter tab.</li>
+<li>Click on the DHCP Server tab.</li>
+<li>Ensure that &ldquo;Enable Server&rdquo; is NOT checked on the DHCP Server tab. Then click &ldquo;OK&rdquo; and &ldquo;OK&rdquo; to save the settings.</li>
+</ol>
+
+
+  
+    <footer>
+      <p class="meta">
+        
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-28T09:04:00-04:00" pubdate data-updated="true">Mar 28<span>th</span>, 2014</time>
+        
+      </p>
+      
+        <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ld4apps.github.io/index.html" data-via="" data-counturl="http://ld4apps.github.io/index.html" >Tweet</a>
   
   
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+  
 </div>
+
+      
+    </footer>
+  
+</article>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
-  <h1>Pages</h1>
+  <h1>Guides</h1>
   <ul id="Pages">
     
-        <li class="page">
-            <a href="/atom.xml"></a>
-        </li>
+    	
+    	
     
-        <li class="page">
-            <a href="/blog/archives/index.html">Blog Archive</a>
-        </li>
+    	
+    	
     
-        <li class="page">
-            <a href="/getting-started/index.html">LDA - Linked Data For Applications</a>
-        </li>
+    	
+    	
     
+    	
         <li class="page">
-            <a href="/index.html"></a>
+            <a href="/index.html">LDA - Linked Data For Applications</a>
         </li>
+        
     
+    	
         <li class="page">
             <a href="/lda-client-libraries/index.html">lda client libraries</a>
         </li>
+        
     
+    	
         <li class="page">
             <a href="/mpnally-tutorial/index.html">Original mpnally Tutorial</a>
         </li>
+        
     
-        <li class="page">
-            <a href="/robots.txt"></a>
-        </li>
+    	
+    	
     
+    	
         <li class="page">
             <a href="/what-is-this-rdf-thing/index.html">what is this rdf thing?</a>
         </li>
-    
-  </ul>
-</section>
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
+        
     
   </ul>
 </section>
@@ -122,7 +313,7 @@
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/ld4apps">@ld4apps</a> on GitHub
@@ -151,6 +342,7 @@
 
   
 </aside>
+
 
     </div>
   </div>

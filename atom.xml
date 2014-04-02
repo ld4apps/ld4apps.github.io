@@ -4,7 +4,7 @@
   <title><![CDATA[Linked Data for Applications (LDA)]]></title>
   <link href="http://ld4apps.github.io/atom.xml" rel="self"/>
   <link href="http://ld4apps.github.io/"/>
-  <updated>2014-04-01T17:42:54-04:00</updated>
+  <updated>2014-04-02T09:47:58-04:00</updated>
   <id>http://ld4apps.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,5 +12,14 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Hello World]]></title>
+    <link href="http://ld4apps.github.io/blog/2014/04/02/hello-world/"/>
+    <updated>2014-04-02T09:35:46-04:00</updated>
+    <id>http://ld4apps.github.io/blog/2014/04/02/hello-world</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
 </feed>
