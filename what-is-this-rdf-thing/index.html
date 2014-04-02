@@ -1,0 +1,1182 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>What Is This Rdf Thing? - Linked Data for Applications (LDA)</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="What Is This Rdf Thing? Mar 28th, 2014 Before you can use the server-implementation part of the LDA framework, you will need some understanding of &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ld4apps.github.io/what-is-this-rdf-thing">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Linked Data for Applications (LDA)" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Linked Data for Applications (LDA)</a></h1>
+  
+    <h2>Composite Apps for the Cloud</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:ld4apps.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/blog/">Blog</a></li>
+  <li><a href="/blog/archives/">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">What Is This Rdf Thing?</h1>
+    <p class="meta">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-28T15:46:00-04:00" pubdate data-updated="true">Mar 28<span>th</span>, 2014</time></p>
+  </header>
+  
+  <p>Before you can use the server-implementation part of the LDA framework, you will need some understanding of the data structures in the messages that will go in and out of an application built on it. These structures are based on RDF. We will assume in this section that you are not already an expert in RDF.</p>
+
+<p>If you are like most people, when you want to find out about something you don&rsquo;t already know, you Google it. In the case of RDF this may not be a good idea, because you will be led to a lot of confusing information that makes RDF seem much more strange and complex than it really is. This description will try to demystify RDF by describing it from the starting point of someone who already knows JSON and likes its simplicity.</p>
+
+<p>One important thing to understand about RDF is that it is a data model, not a data format, so RDF data can be represented in XML, JSON and other formats. From a programmer&rsquo;s perspective, the interesting question might be how RDF data is represented in programming-language data structures (objects, arrays, literals). Since there is a very direct correspondence between JSON and the data structures of popular programming languages like Python, Ruby and Javascript, understanding a JSON format for RDF data gets you a long way towards answering this question.</p>
+
+<h3>RDF for JSON programmers &ndash; lesson 1</h3>
+
+<p>Let&rsquo;s take the example of an on-line product review at Amazon.com. Since Amazon URLs are long and complicated and difficult to read (they should work on that), we&rsquo;re going to substitute them as follows:</p>
+
+<table>
+<thead>
+<tr>
+<th>Simplification </th>
+<th> Real Amazon URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://az.com/reviewer_1">http://az.com/reviewer_1</a> </td>
+<td> <a href="http://www.amazon.com/gp/pdp/profile/A3KHHVMTMUX6X8/ref=cm_cr_pr_pdp">http://www.amazon.com/gp/pdp/profile/A3KHHVMTMUX6X8/ref=cm_cr_pr_pdp</a></td>
+</tr>
+<tr>
+<td><a href="http://az.com/reviewer_2">http://az.com/reviewer_2</a> </td>
+<td> <a href="http://www.amazon.com/gp/pdp/profile/A36NZ8AO7R5BQ0/ref=cm_cr_rdp_pdp">http://www.amazon.com/gp/pdp/profile/A36NZ8AO7R5BQ0/ref=cm_cr_rdp_pdp</a></td>
+</tr>
+<tr>
+<td><a href="http://az.com/review_1">http://az.com/review_1</a> </td>
+<td> <a href="http://www.amazon.com/review/RE9YX25OLHSY4/ref=cm_cr_pr_perm?ie=UTF8&amp;ASIN=B003MTTJOY&amp;linkCode=&amp;nodeID=&amp;tag=">http://www.amazon.com/review/RE9YX25OLHSY4/ref=cm_cr_pr_perm?ie=UTF8&amp;ASIN=B003MTTJOY&amp;linkCode=&amp;nodeID=&amp;tag=</a></td>
+</tr>
+<tr>
+<td><a href="http://az.com/review_2">http://az.com/review_2</a> </td>
+<td> <a href="http://www.amazon.com/review/R1KU1SEX1ZJW74/ref=cm_cr_pr_perm?ie=UTF8&amp;ASIN=B003MTTJOY&amp;linkCode=&amp;nodeID=&amp;tag=">http://www.amazon.com/review/R1KU1SEX1ZJW74/ref=cm_cr_pr_perm?ie=UTF8&amp;ASIN=B003MTTJOY&amp;linkCode=&amp;nodeID=&amp;tag=</a></td>
+</tr>
+<tr>
+<td><a href="http://az.com/product_1">http://az.com/product_1</a> </td>
+<td> <a href="http://www.amazon.com/Edimax-EW-7811Un-Wireless-Adapter-Wizard/dp/B003MTTJOY/ref=cm_cr_pr_product_top">http://www.amazon.com/Edimax-EW-7811Un-Wireless-Adapter-Wizard/dp/B003MTTJOY/ref=cm_cr_pr_product_top</a></td>
+</tr>
+</tbody>
+</table>
+
+
+<p>Now, what would <a href="http://az.com/review_1,">http://az.com/review_1,</a> for example, look like in JSON? A typical JSON programmers would probably suggest something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">192</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;Good little Wifi Adapter&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I purchased this to add wireless connectivity to my Raspberry Pi [...]&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>We are assuming that our programmer already understands and is following the REST model. A programmer following the rpc-over-http model would probably have provided database primary keys for reviewer and product, and would have expected clients to compose URLs by tacking the database primary key onto some URL string prefix, likely with a &lsquo;?&rsquo; in between and maybe an &lsquo;=&rsquo; for good luck.</em></p>
+
+<p>It is hard to quarrel with the simplicity and intuitiveness of this JSON, and we will try not to spoil it as we convert it to RDF.</p>
+
+<p>If we put aside the notation and look at the underlying data model for the above information, it might look like this:</p>
+
+<table>
+<thead>
+<tr>
+<th>Property </th>
+<th> Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>found_helpful </td>
+<td> 180</td>
+</tr>
+<tr>
+<td>found_helpful_or_not </td>
+<td> 192</td>
+</tr>
+<tr>
+<td>stars </td>
+<td> 4</td>
+</tr>
+<tr>
+<td>title </td>
+<td> Good little Wifi Adapter</td>
+</tr>
+<tr>
+<td>reviewer </td>
+<td> <a href="http://az.com/reviewer_1">http://az.com/reviewer_1</a></td>
+</tr>
+<tr>
+<td>reviewOf </td>
+<td> <a href="http://az.com/product_1">http://az.com/product_1</a></td>
+</tr>
+<tr>
+<td>verified_purchase </td>
+<td> true</td>
+</tr>
+<tr>
+<td>text </td>
+<td> I purchased this to add wireless connectivity to my Raspberry Pi [&hellip;]</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>It is clear this is a set of property-value pairs, but it is less clear what they are the property-values of. A JSON programmer would probably say that they are the values for the review whose representation this is. In other words, if you do a GET on the review <a href="http://az.com/review_1">http://az.com/review_1</a> then you can assume that the property values returned are the property values of <a href="http://az.com/review_1.">http://az.com/review_1.</a> Although this assumption sounds reasonable, it actually turns out to be a problem in more complex cases even for the native JSON programmer (see the next example), so we are going to remove this assumption by making the information explicit. We do this by adding a new JSON property, as follows.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nt">&quot;_subject&quot;</span><span class="p">:</span> <span class="s2">&quot;http://az.com/review_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">192</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;Good little Wifi Adapter&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I purchased this to add wireless connectivity to my Raspberry Pi [...]&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Congratulations, you just (re-)invented RDF! Really, that is all there is to it &ndash; the rest is detail. People knowledgeable of RDF will quibble with some aspects of this representation, but we claim that we have already converted our simple JSON to an RDF data model. What we did looks trivial, but it&rsquo;s actually quite profound. You have to realize that _subject is really not another property of the review. The data model we derive from the new JSON is not the following table as you might expect:</p>
+
+<table>
+<thead>
+<tr>
+<th>Property </th>
+<th> Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_subject </td>
+<td> <a href="http://az.com/review_1">http://az.com/review_1</a></td>
+</tr>
+<tr>
+<td>found_helpful </td>
+<td> 180</td>
+</tr>
+<tr>
+<td>found_helpful_or_not </td>
+<td> 192</td>
+</tr>
+<tr>
+<td>stars </td>
+<td> 4</td>
+</tr>
+<tr>
+<td>title </td>
+<td> Good little Wifi Adapter</td>
+</tr>
+<tr>
+<td>reviewer </td>
+<td> <a href="http://az.com/reviewer_1">http://az.com/reviewer_1</a></td>
+</tr>
+<tr>
+<td>reviewOf </td>
+<td> <a href="http://az.com/product_1">http://az.com/product_1</a></td>
+</tr>
+<tr>
+<td>verified_purchase </td>
+<td> true</td>
+</tr>
+<tr>
+<td>text </td>
+<td> I purchased this to add wireless connectivity to my Raspberry Pi [&hellip;]</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>Instead, the data model is this:</p>
+
+<table>
+<thead>
+<tr>
+<th>Subject </th>
+<th> Property </th>
+<th> Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://az.com/review_1">http://az.com/review_1</a> </td>
+<td> found_helpful </td>
+<td> 180</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> found_helpful_or_not </td>
+<td> 192</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> stars </td>
+<td> 4</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> title </td>
+<td> Good little Wifi Adapter</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> reviewer </td>
+<td> <a href="http://az.com/reviewer_1">http://az.com/reviewer_1</a></td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> reviewOf </td>
+<td> <a href="http://az.com/product_1">http://az.com/product_1</a></td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> verified_purchase </td>
+<td> true</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> text </td>
+<td> I purchased this to add wireless connectivity to my Raspberry Pi [&hellip;]</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>_subject is not specifying a new property of the review, it&rsquo;s defining which review we are talking about. You might think it&rsquo;s reasonable to think of the URI of a review as being one of its properties, but this view of things breaks down quickly and will get in the way of your understanding of RDF.</p>
+
+<p>The key ideas that make RDF different from ordinary Javascript objects are these.</p>
+
+<ol>
+<li> Simple Javascript objects contain property-value pairs, while RDF adds the information about whose property-value pairs they are (the &lsquo;subject&rsquo;, in RDF terminology)</li>
+<li> The subject of the property-value pairs is identified by a URI</li>
+</ol>
+
+
+<p>We will add a caution here. In its essence, RDF really is as simple as described above, but the fact that it is simple does not make it easy. It takes some time to really understand the implications of this simple model, and to unlearn false assumptions one is typically carrying over from an object-oriented way of thinking.</p>
+
+<p>If our warning came too late and you have already done some Googling on RDF, let&rsquo;s relate this to what you might have seen. The three-column table above is a rendering of the standard RDF &ldquo;graph of triples&rdquo; &ndash; each row describes one triple. RDF calls sets of triples like these &lsquo;graphs&rsquo;, and the standard tutorial material usually emphasizes how you can match URL values in the left column with URL values in the right column to form a graph from the table. In our experience it&rsquo;s often more useful to think of a set of RDF triples as a simple table than as a graph. Also, there is a W3C recommendation called JSON-LD that specifies an &lsquo;approved&rsquo; version of what we just did with <em>subject. Unfortunately, JSON-LD says you should use &ldquo;@id&rdquo; instead of &ldquo;</em>subject&rdquo;, but since that choice is awkward to deal with in some programming languages (e.g. Javascript), and totally incompatible with some popular programming libraries, we don&rsquo;t recommend (or implement) spec compliance on this point. JSON-LD is a very large specification with many options &ndash; what we just did above is compatible with just one important option in the spec (if you ignore the details).</p>
+
+<p><em>Those of you with sharp eyes for detail may have noticed a little irony in the RDF table above. In the first column we used &ldquo;&rdquo; to mean ditto to avoid repeating the long URL at the top of the column. However, &ldquo;&rdquo; could also be interpreted literally to mean the empty string, which is also a valid URL &ndash; it is the null relative URL &ndash; which happens to also be a correct URL value in this case, where the representation is the result of a GET on the longer url.</em></p>
+
+<p>If you are not yet convinced that you should care about RDF. a reasonable reaction to the above discussion might be &ldquo;OK, it makes sense, and it&rsquo;s not difficult to do, but really, I was doing fine without this, and I have more pressing problems to solve, so why would I care?&rdquo;. Let&rsquo;s try another example.</p>
+
+<h3>RDF for JSON programmers &ndash; lesson 2</h3>
+
+<p>In the example above, we had a product whose URL is <a href="http://az.com/product_1.">http://az.com/product_1.</a></p>
+
+<p>As you might expect, at Amazon.com, each review is its own resource with its own URL that you can bookmark. Given a product, we will need to be able to find the reviews for the product, so assume that corresponding to this product there is a resource that represents its collection of reviews, whose URL is this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'>http://az.com/product_1/reviews
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>You would find this URL inside the representation of <a href="http://az.com/product_1">http://az.com/product_1</a> and you would not try to guess it by postpending &lsquo;review&rsquo; to the stringified URL of the product.</em></p>
+
+<p>If we asked the same JSON programmer that we asked before to give us the JSON for this collection of resources, you would probably get this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">[</span>
+</span><span class='line'>    <span class="s2">&quot;http://az.com/review_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;http://az.com/review_2&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="err">...</span>
+</span><span class='line'><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If the representation of a collection only contains the URLs of the collection&rsquo;s members, it&rsquo;s not very convenient for a client, because most use-cases will require the client to then fetch each member of the collection individually via HTTP GET. Even without input from us, our JSON programmer would probably be pushed by client colleagues to enhance the representation to be something more like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">[</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nt">&quot;_subject&quot;</span><span class="p">:</span> <span class="s2">&quot;http://az.com/review_1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">192</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;Good little Wifi Adapter&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I purchased this to add wireless connectivity to my Raspberry Pi [...]&quot;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nt">&quot;_subject&quot;</span><span class="p">:</span> <span class="s2">&quot;http://az.com/review_2&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">72</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">77</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;great little product for price!&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_2&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I was amazed at how tiny it is! [...]&quot;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="err">...</span>
+</span><span class='line'><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice that our programmer had to invent &ldquo;_subject&rdquo; (or some synonym for that concept) for this case &ndash; even without having seen our first RDF lesson &ndash; because the outer context can no longer be depended on to know what resources the information pertains to. This means that the programmer was already using a homemade form of RDF, but had not formalized it and was not doing it consistently. What we have found is that there are many cases like this where a common design issue in JSON has a very natural solution when you view things from an RDF perspective. Taking advantage of the work that has been done by a community of smart people to formalize the RDF model helps architects with overall design integrity, at the cost of having to read and decode the RDF literature. Alternatively, you can build on the LDA framework and have a lot of it done for you <g>.</p>
+
+<p>Even though each entry already has a &lsquo;_subject&rsquo;, we are still relying on context to convey implicit information in this example &ndash; there is nothing in the data that tells us that these reviews are the members of the collection. Here is the table of triples that can be derived from the data as it currently appears:</p>
+
+<table>
+<thead>
+<tr>
+<th>Subject </th>
+<th> Property </th>
+<th> Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://az.com/review_1">http://az.com/review_1</a> </td>
+<td> found_helpful </td>
+<td> 180</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> found_helpful_or_not </td>
+<td> 192</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> stars </td>
+<td> 4</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> title </td>
+<td> Good little Wifi Adapter</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> reviewer </td>
+<td> <a href="http://az.com/reviewer_1">http://az.com/reviewer_1</a></td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> reviewOf </td>
+<td> <a href="http://az.com/product_1">http://az.com/product_1</a></td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> verified_purchase </td>
+<td> true</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> text </td>
+<td> I purchased this to add wireless connectivity to my Raspberry Pi [&hellip;]</td>
+</tr>
+<tr>
+<td><a href="http://az.com/review_2">http://az.com/review_2</a> </td>
+<td> found_helpful </td>
+<td> 72</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> found_helpful_or_not </td>
+<td> 77</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> stars </td>
+<td> 5</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> title </td>
+<td> great little product for price!</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> reviewer </td>
+<td> <a href="http://az.com/reviewer_1">http://az.com/reviewer_1</a></td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> reviewOf </td>
+<td> <a href="http://az.com/product_1">http://az.com/product_1</a></td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> verified_purchase </td>
+<td> true</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> text </td>
+<td> I was amazed at how tiny it is! [&hellip;]</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>You can see that we are simply assuming that if these reviews are mentioned in the collection&rsquo;s
+representation, it must mean that they are members of the collection. Since we don&rsquo;t like these sort of implicit assumptions, we will make it explicit. We actually have two different ways of doing this &ndash; we&rsquo;ll start with the more obvious one.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nt">&quot;_subject&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1/reviews&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;member&quot;</span> <span class="p">:</span> <span class="p">[</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nt">&quot;_subject&quot;</span><span class="p">:</span> <span class="s2">&quot;http://az.com/review_1&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+</span><span class='line'>            <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">192</span><span class="p">,</span>
+</span><span class='line'>            <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>            <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;Good little Wifi Adapter&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_1&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>            <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I purchased this to add wireless connectivity to my Raspberry Pi [...]&quot;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>        <span class="nt">&quot;_subject&quot;</span><span class="p">:</span> <span class="s2">&quot;http://az.com/review_2&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">72</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">77</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;great little product for price!&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_2&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I was amazed at how tiny it is! [...]&quot;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="err">...</span>
+</span><span class='line'>    <span class="p">]</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Although this added a whole new level of nesting to the JSON, in reality it just added two new triples to our table:</p>
+
+<table>
+<thead>
+<tr>
+<th>Subject </th>
+<th> Property </th>
+<th> Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://az.com/product_1/reviews">http://az.com/product_1/reviews</a> </td>
+<td> member </td>
+<td> <a href="http://az.com/review_1">http://az.com/review_1</a></td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> member </td>
+<td> <a href="http://az.com/review_2">http://az.com/review_2</a></td>
+</tr>
+<tr>
+<td>&hellip; </td>
+<td> &hellip; </td>
+<td> &hellip;</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>Now we have triples that declare explicitly which resources are the members rather than relying on assumptions.</p>
+
+<p><em>Note that the _subject JSON property of the reviews is playing double-duty here &ndash; it is defining the subject of the property-values within the nested JSON objects for the reviews, and it is defining the values of the &lsquo;member&rsquo; property for the outer JSON object that represents the collection.</em></p>
+
+<p>In this example, we forced the programmer to complicate the representation of the collection with an extra level of nesting. However, it&rsquo;s quite likely that would have needed to be done anyway. Suppose for example, that we decide to record other information for the collection, like the time of the last update, or the number of entries &ndash; there are many plausible property values for a collection. The simplest way of adding these properties is to organize the data the way we have shown.</p>
+
+<p>Hopefully we have convinced you that our conversion to the RDF data model has preserved the simplicity and intuitiveness of the JSON a programmer originally came up with and that the changes we imposed were pretty desirable ones anyway.</p>
+
+<p><em>In case you are wondering about the other technique for specifying the members, it amounts to providing some properties on the collection itself that together specify a rule that says &lsquo;to find the members, look for all x such that a triple (x, &ldquo;reviewOf&rdquo;, &ldquo;<a href="http://az.com/product_1">http://az.com/product_1</a>&rdquo;) is in the representation&rsquo;. You can see in the data above that this gives the same result as the member triples, and you will see later why that is an interesting way to think about collection membership.</em></p>
+
+<h3>RDF is a different perspective</h3>
+
+<p>Here are a couple of examples that will show you that even though RDF is very simple, it can challenge your object-oriented pre-conceptions. Consider this JSON</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">[</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nt">&quot;_subject&quot;</span><span class="p">:</span> <span class="s2">&quot;http://martin-nally.name&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;givenName&quot;</span> <span class="p">:</span> <span class="s2">&quot;Martin&quot;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nt">&quot;_subject&quot;</span><span class="p">:</span> <span class="s2">&quot;http://martin-nally.name&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;familyName&quot;</span> <span class="p">:</span> <span class="s2">&quot;Nally&quot;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The object-oriented programmer in us sees two objects in an array. However, RDF sees only information about a single resource &ndash; <a href="http://martin-nally.name.">http://martin-nally.name.</a> The fact that the information in the resource representation was grouped into two different objects has no meaning for RDF &ndash; it all boils down to this table:</p>
+
+<table>
+<thead>
+<tr>
+<th>Subject </th>
+<th> Property </th>
+<th> Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://martin-nally.name">http://martin-nally.name</a> </td>
+<td> givenName </td>
+<td> &ldquo;Martin&rdquo;</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> familyName </td>
+<td> &ldquo;Nally</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>All those little objects don&rsquo;t mean anything &ndash; they are just containers for sets of rows for the table.</p>
+
+<p>Here is another example to challenge your object-oriented assumptions. Up above, we looked at the representation of the resource <a href="http://az.com/review_1.">http://az.com/review_1.</a> It looked like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nt">&quot;_subject&quot;</span><span class="p">:</span> <span class="s2">&quot;http://az.com/review_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">192</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;Good little Wifi Adapter&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I purchased this to add wireless connectivity to my Raspberry Pi [...]&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This information corresponds to the following RDF table:</p>
+
+<table>
+<thead>
+<tr>
+<th>Subject </th>
+<th> Property </th>
+<th> Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://az.com/review_1">http://az.com/review_1</a> </td>
+<td> found_helpful </td>
+<td> 180</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> found_helpful_or_not </td>
+<td> 192</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> stars </td>
+<td> 4</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> title </td>
+<td> Good little Wifi Adapter</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> reviewer </td>
+<td> <a href="http://az.com/reviewer_1">http://az.com/reviewer_1</a></td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> reviewOf </td>
+<td> <a href="http://az.com/product_1">http://az.com/product_1</a></td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> verified_purchase </td>
+<td> true</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> text </td>
+<td> I purchased this to add wireless connectivity to my Raspberry Pi [&hellip;]</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>In RDF, it would be simple and easy to change this line:</p>
+
+<table>
+<thead>
+<tr>
+<th>Subject </th>
+<th> Property </th>
+<th> Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> reviewOf </td>
+<td> <a href="http://az.com/product_1">http://az.com/product_1</a></td>
+</tr>
+</tbody>
+</table>
+
+
+<p>to this:</p>
+
+<table>
+<thead>
+<tr>
+<th>Subject </th>
+<th> Property </th>
+<th> Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://az.com/product_1">http://az.com/product_1</a> </td>
+<td> reviewedIn </td>
+<td> <a href="http://az.com/review_1">http://az.com/review_1</a></td>
+</tr>
+</tbody>
+</table>
+
+
+<p>All we did was reverse the direction of the triple &ndash; instead of saying &ldquo;review_1 is a review of product_1&rdquo;, we reversed it to say &ldquo;product_1 is reviewed in review_1&rdquo;. This information is still held in the representation of the review, not the product, and the information is entirely equivalent &ndash; all we did was change the way we stated it.</p>
+
+<p>Although this change was trivial and inconsequential at the RDF level, it is now more complicated to put this information back into a JSON format &ndash; try it. <em>Hint &ndash; the representation of each review will become more complex &ndash; you will need two JSON objects instead of one to hold the information, but &ndash; surprisingly &ndash; the representation of the collection <a href="http://az.com/product_1/reviews">http://az.com/product_1/reviews</a> magically becomes simpler &ndash; we no longer have to invent membership triples.</em></p>
+
+<p>RDF also allows us to correct a conceptual problem with the data in the original example. The properties &lsquo;found_helpful&rsquo; and &lsquo;found_helpful_or_not&rsquo; are clearly properties of the review &ndash; they are trying to indicate how good the review is. However &lsquo;stars&rsquo; is not really a property of the review at all &ndash; it&rsquo;s trying to say how good the product is, not how good the review is. As a human who speaks English, we can use common sense to figure this out, but if a machine tried, or if the example had been done in a language we don&rsquo;t know, it couldn&rsquo;t be figured out. RDF gives us an easy way to correct this, by changing the table for the review to this:</p>
+
+<table>
+<thead>
+<tr>
+<th>Subject </th>
+<th> Property </th>
+<th> Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://az.com/review_1">http://az.com/review_1</a> </td>
+<td> found_helpful </td>
+<td> 180</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> found_helpful_or_not </td>
+<td> 192</td>
+</tr>
+<tr>
+<td><a href="http://az.com/product_1">http://az.com/product_1</a> </td>
+<td> stars </td>
+<td> 4</td>
+</tr>
+<tr>
+<td><a href="http://az.com/review_1">http://az.com/review_1</a> </td>
+<td> title </td>
+<td> Good little Wifi Adapter</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> reviewer </td>
+<td> <a href="http://az.com/reviewer_1">http://az.com/reviewer_1</a></td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> reviewOf </td>
+<td> <a href="http://az.com/product_1">http://az.com/product_1</a></td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> verified_purchase </td>
+<td> true</td>
+</tr>
+<tr>
+<td>&ldquo;&rdquo; </td>
+<td> text </td>
+<td> I purchased this to add wireless connectivity to my Raspberry Pi [&hellip;]</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>This would convert back to JSON like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nt">&quot;_subject&quot;</span><span class="p">:</span> <span class="s2">&quot;http://az.com/review_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">192</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;Good little Wifi Adapter&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nt">&quot;_subject&quot;</span><span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I purchased this to add wireless connectivity to my Raspberry Pi [...]&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It&rsquo;s unlikely we would have thought of doing this if we had just thought about it from a JSON point of view, but when we looked at it from an RDF point of view, it was pretty obvious what the right fix was.</p>
+
+<h3>Another JSON format for RDF</h3>
+
+<p>When we introduced the &lsquo;_subject&rsquo; JSON property above, we emphasized that it is not really a property in the underlying data model. There is an alternative approach to organizing the JSON that makes this observation even clearer, and which provides an alternative JSON structure for RDF that is superior for some use-cases, but not all. We&rsquo;ll call this alternative organization RDF/JSON after the <a href="https://dvcs.w3.org/hg/rdf/raw-file/default/rdf-json/index.html">W3C note</a> that specifies a version of the idea &ndash; we support an extended version of that spec. As a reminder, here is our original starting JSON.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">192</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;Good little Wifi Adapter&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I purchased this to add wireless connectivity to my Raspberry Pi [...]&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With our more liberal version of RDF/JSON (The specification in the W3C note does not allow the values of properties to be simple strings and numbers as shown here &ndash; they have to be structures. This makes programming tedious, so our implementation is more liberal), instead of introducing &lsquo;_subject&rsquo;, you do this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nt">&quot;http://az.com/review_1&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">192</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;Good little Wifi Adapter&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I purchased this to add wireless connectivity to my Raspberry Pi [...]&quot;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The JSON &lsquo;names&rsquo; at the outer level are not property names, they are the URLs of the subjects of the property/value pairs in the inner objects.</p>
+
+<p>With RDF/JSON, you do not nest additional JSON objects the way we saw before with the JSON-LD-inspired format. If you take our container example from above, it could look like the following in RDF/JSON. [Note this differs in some details from what we do in LDA framework &ndash; we&rsquo;ll show you what we really do later.]</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nt">&quot;http://az.com/product_1/reviews&quot;</span> <span class="p">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nt">&quot;member&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://az.com/review_1&quot;</span><span class="p">,</span> <span class="s2">&quot;http://az.com/review_2&quot;</span><span class="p">]</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&quot;http://az.com/review_1&quot;</span> <span class="p">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">192</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;Good little Wifi Adapter&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I purchased this to add wireless connectivity to my Raspberry Pi [...]&quot;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&quot;http://az.com/review_2&quot;</span> <span class="p">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">72</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">77</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;great little product for price!&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_2&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I was amazed at how tiny it is! [...]&quot;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From a programmer&rsquo;s perspective, sometimes the [in-memory equivalent of the] RDF/JSON format is more convenient and sometimes the [in-memory equivalent of the] JSON-LD format is more convenient &ndash; the client libraries allow you to flip between them without going back to the server. There are a number of technical reasons &ndash; too low-level and detailed to discuss here &ndash; why RDF/JSON actually works better than JSON-LD as a format to exchange between clients and servers, and this is the format the LDA frameworks and libraries mostly use. This is largely transparent to the client programmer.</p>
+
+  
+    <footer>
+      <p class="meta">
+        
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-28T15:46:00-04:00" pubdate data-updated="true">Mar 28<span>th</span>, 2014</time>
+        
+      </p>
+      
+        <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ld4apps.github.io/what-is-this-rdf-thing/index.html" data-via="" data-counturl="http://ld4apps.github.io/what-is-this-rdf-thing/index.html" >Tweet</a>
+  
+  
+  
+</div>
+
+      
+    </footer>
+  
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Guides</h1>
+  <ul id="Pages">
+    
+    	
+    	
+    
+    	
+    	
+    
+    	
+    	
+    
+    	
+        <li class="page">
+            <a href="/developing-lda-applications/index.html">Developing LDA Applications</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/index.html">Getting Started</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/lda-client-libraries/index.html">lda client libraries</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/mpnally-tutorial/index.html">Original mpnally Tutorial</a>
+        </li>
+        
+    
+    	
+    	
+    
+    	
+        <li class="page">
+            <a href="/what-is-this-rdf-thing/index.html">what is this rdf thing?</a>
+        </li>
+        
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/ld4apps">@ld4apps</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'ld4apps',
+            count: 20,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

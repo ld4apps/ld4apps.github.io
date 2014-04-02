@@ -1,0 +1,483 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Developing LDA Applications - Linked Data for Applications (LDA)</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="Developing LDA Applications Apr 2nd, 2014 As with most technologies, the easiest way to get started is to look at a example. To help you get an idea &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ld4apps.github.io/developing-lda-applications">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Linked Data for Applications (LDA)" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Linked Data for Applications (LDA)</a></h1>
+  
+    <h2>Composite Apps for the Cloud</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:ld4apps.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/blog/">Blog</a></li>
+  <li><a href="/blog/archives/">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">Developing LDA Applications</h1>
+    <p class="meta">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-02T11:22:00-04:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2014</time></p>
+  </header>
+  
+  <p>As with most technologies, the easiest way to get started is to look at a example. To help you get an idea of how LDA applications are implemented, we&rsquo;ll start with a very simple &lsquo;Todo List&rsquo; application from the <a href="https://github.com/ld4apps/lda-examples">lda-examples</a> repository. You should be able to understand the framework just by reading, but you might also like to install the software yourself and follow along in a more hands-on fashion. If so, refer to <a href="http://ld4apps.github.io/getting-started/index.html">Getting Started</a> before proceeding.</p>
+
+<p>Every LDA-based application requires a minimum of two files:</p>
+
+<ol>
+<li> logic_tier.py</li>
+<li> application.js</li>
+</ol>
+
+
+<h3>logic_tier.py</h3>
+
+<p>This is a python file that implements the server application, which takes the form of a Python class. This class can get all the standard REST/RDF behavior by subclassing a class provided in the framework. The simplest file to get started looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">example_logic_tier</span> <span class="kn">as</span> <span class="nn">base</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Domain_Logic</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">Domain_Logic</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">pass</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Because of the code it inherits, this trivial implementation already supports the full HTTP/REST protocol. You will override these behaviors to implement business logic specific to your application &ndash; validations, augmentations, side-effects, and so on.</p>
+
+<p>The inherited code is found in two library modules called logiclibrary and mongodbstorage. When these are more mature, we will no doubt supply them as Python &lsquo;eggs&rsquo;. For now they are available in the <a href="https://github.com/ld4apps/lda-serverlib">lda-serverlib</a> repository which you need to download from github.</p>
+
+<p>If you look at the &lsquo;Todo List&rsquo; application, you&rsquo;ll see that its logic_tier.py implementation class (located in lda-examples/todo/src/logic_tier.py), is exactly the simple implementation shown above. It adds no custom server implementation code of its own.</p>
+
+<h3>application.js</h3>
+
+<p>This is a Javascript file that implements your client application, which is usually a mobile or web user interface. This file, and any others it references, can be anywhere on the web &ndash; they do not have to be on your business logic server &ndash; we have run them from Amazon S3, for example. application.js can do anything it wants, but the following example file will take advantage of the libraries we have written to support REST and RDF, and still let your application do pretty much anything it wants.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">onload_function</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">head</span>  <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">util_script</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="nx">util_script</span><span class="p">.</span><span class="nx">type</span><span class="o">=</span> <span class="s1">&#39;text/javascript&#39;</span>
+</span><span class='line'>    <span class="nx">util_script</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="s1">&#39;/clientlib/utils.js&#39;</span>
+</span><span class='line'>    <span class="nx">util_script</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">ld_util</span><span class="p">.</span><span class="nx">onload</span><span class="p">({},</span> <span class="s1">&#39;exampleserver/application.html&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="nx">head</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">util_script</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="nx">onload_function</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What this code does basically is load the LDA utils.js client libarary (see <a href="https://github.com/ld4apps/lda-clientlib">lda-clientlib</a>) first, and then load application.html which is a file you will write. If you choose to use the LDA client libraries (which we recommend) your application.html must contain an html body, but no html, header or body tags. Other than that, you can put whatever you like in application.html &ndash; it can load and execute whatever javascript libraries it likes, and include whatever html it likes. A very reasonable thing to do is to use this &lsquo;standard&rsquo; implementation of application.js shown above unmodified and consider application.html as being the real &lsquo;root&rsquo; of your UI application. This is, after all, the normal way you build a web or mobile application &ndash; it all starts with your root html file. We will explain more later on this.</p>
+
+<p>If you look at the &lsquo;Todo List&rsquo; application&rsquo;s version of application.js, you&rsquo;ll notice that it is slightly more complicated than the simplest &lsquo;standard&rsquo; one above. It looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">BP</span> <span class="o">=</span> <span class="s1">&#39;http://open-services.net/ns/basicProfile#&#39;</span>
+</span><span class='line'><span class="nx">TD</span> <span class="o">=</span> <span class="s1">&#39;http://example.org/todo#&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">onload_function</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">type_to_theme_map</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'>    <span class="nx">type_to_theme_map</span><span class="p">[</span><span class="nx">BP</span><span class="o">+</span><span class="s1">&#39;Container&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;/todo/list.html&#39;</span>
+</span><span class='line'>    <span class="nx">type_to_theme_map</span><span class="p">[</span><span class="nx">TD</span><span class="o">+</span><span class="s1">&#39;Item&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;/todo/item.html&#39;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">head</span>  <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">util_script</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="nx">util_script</span><span class="p">.</span><span class="nx">type</span><span class="o">=</span> <span class="s1">&#39;text/javascript&#39;</span>
+</span><span class='line'>    <span class="nx">util_script</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="s1">&#39;/clientlib/utils.js&#39;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">util_script</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">ld_util</span><span class="p">.</span><span class="nx">onload</span><span class="p">({},</span> <span class="nx">type_to_theme_map</span><span class="p">,</span> <span class="kc">null</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="nx">head</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">util_script</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="nx">onload_function</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see, the only difference is that instead of loading the single applications.html file, it consturcts and passes a simple type-to-file map, instucting the framework to load one of several (in this case 2) html files, depending on the (RDF) type of the resource being loaded. If the resource is a (todo) item, we load item.html to display the individual item. If the resource is a container, we load list.html to display the todo list iteself. This demonstrates the fundamental pattern that the LDA framework uses to implement <a href="http://ld4apps.github.io/lda-client-libraries/index.html">Single Page Applictions (SPAs)</a>. We&rsquo;ll look at the &lsquo;Todo List&rsquo; implementation in more detail below.</p>
+
+<p>The &lsquo;Todo List&rsquo; sample includes a couple of other things you will need if you want to play with the software.</p>
+
+<ol>
+<li><p> A setup.py file &ndash; You can execute this server file with Python to download the python dependencies of the framework. [We do our best to minimize dependencies, but we do have a few. Currently they are: requests, webob, pycrypto, pymongo, isodate, python-dateutil, rdflib, and werkzeug. requests and webob are popular python libraries that implement functions for sending http requests and reading data from http inputs. pycrypto is a cryptography library that is only required if you are using the authentication feature. pymongo is the python client library for MongoDB. isodate and python-dateutil provide methods to help with Date formatting and parsing. rdflib allows us to support a broad range of RDF data formats without any work on the application developer&rsquo;s part. werkzeug is only used in the single-application development environment, and then only to serve static files.]</p></li>
+<li><p> A shell/bat command to start the application in a python web server. This is only used for development configurations &ndash; in production this job would fall to standard web servers and application servers like Apache, Nginx, uWSGI, GUnicorn etc.</p></li>
+</ol>
+
+
+<h2>Hands-on</h2>
+
+<p>We will now go through a simple demo using the browser console to add and display todo items.</p>
+
+<p>The first thing to do is run the application in a command/shell window:</p>
+
+<p><img src="images/image11.png" alt="" /></p>
+
+<p>localhost:3007/x - where x is any simple path segment &ndash; is the name of a container to which you can POST to create new resources, and which you can GET to see what you already have. [Of course, you can override all this default behavior if you want by writing Python code.] If you POST to localhost:3007/x, it will create a resource whose URL is localhost:3007/x/n.m, where n is the numerical id of the server copy that handles the request (a small monotonically-increasing number) and m is the numerical id of the resource (another monotonically-increasing number). Clients do not need to know this information &ndash; for them URLs should be opaque and anyway we may choose to change these rules on the server &ndash; but you as a server developer using the framework may be interested.</p>
+
+<p>At this point, you can go to a browser and enter the address &ldquo;localhost:3007/tt&rdquo;.</p>
+
+<p>[tt is just the value of x we will use for this example &ndash; you can enter &ldquo;localhost:3007/x&rdquo; where x is anything you fancy. Normally you would be running behind a reverse proxy that is configured to only forward the values of x that you have chosen for your subsystems, but here we are running wide- open in development so you can enter anything.]</p>
+
+<p>In the browser you will see the following:</p>
+
+<p><img src="images/image15.png" alt="" /></p>
+
+<p>The reason you see this text is that the application.html file currently looks like this:</p>
+
+<p><img src="images/image16.png" alt="" /></p>
+
+<p>However, if you look at the source of the page, you will see this:</p>
+
+<p><img src="images/image04.png" alt="" /></p>
+
+<p>This will be surprising to many HTML programmers. The HTML contains an RDFa representation of the data resource at &ldquo;localhost:3007/tt&rdquo;. This HTML does not attempt to render the information in any interesting way and even if it did, we are not using it anyway &ndash; we load application.html over top of it instead. [On our to-do list is to allow server developers to embellish the RDFa representation for search-engine optimization, but not to implement UI presentation.] What the user actually sees is the content provided by application.html, which was loaded by application.js.</p>
+
+<p>[If you turn off javascript in the browser, you will actually see the RDFa rendered. There is also an environment variable you can set on the server that will generate more elaborate RDFa that actually does render itself in a more readable way if Javascript is off. This will not give you a reasonable UI for your application, but it can be useful/amusing for debugging or pedagogical purposes.]</p>
+
+<p>Why do we do things this way? This approach allows a very clean separation of the server, which concerns itself only with business logic and data storage, and the user interface, which is implemented in HTML and javascript and which does not even have to reside on the same server as the business logic (we have run with the UI files on Amazon S3, for example).</p>
+
+<h3>Customizing the UI</h3>
+
+<p>We can easily enhance  application.html to show a (slightly) more interesting view of the resource as follows:</p>
+
+<p><img src="images/image01.png" alt="" /></p>
+
+<p>Hitting the refresh button on the browser will produce this:</p>
+
+<p><img src="images/image21.png" alt="" /></p>
+
+<p>Don&rsquo;t worry about the detail of the information shown here &ndash; we&rsquo;ll come back to it in a longer discussion of containers. Also, be aware this is not a JSON format &ndash; it&rsquo;s a JSON-like display rendering to help you understand what data is there.</p>
+
+<p>When application.js ran it loaded our utility library, and then called an onload function in that library. The RDFa content in the HTML representation of the resource holds important information, but not in a format that is very friendly to Javascript programmers, so the utility onload function converts it to more usable Javascript objects in memory &ndash; similar to the &lsquo;simple JSON&rsquo; ones described in the RDF lessons above &ndash; which it then sets as a property called initial_simple_jso in a global variable called APPLICATION_ENVIRON. It then erases the RDFa from the HTML document body and replaces it with the contents of application.html.  In this example, the script in application.html finds these Javascript objects, converts them to a string, and then replaces the HTML document body once again with the result.</p>
+
+<h3>Exercising the server API</h3>
+
+<p>We can now use the browser console to create a new resource in this container, as shown in this screen-shot:</p>
+
+<p><img src="images/image22.png" alt="" /></p>
+
+<p>The command we used was</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">request</span> <span class="o">=</span> <span class="nx">ld_util</span><span class="p">.</span><span class="nx">send_create</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;_subject&quot;</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;prop1&quot;</span><span class="o">:</span><span class="s2">&quot;val1&quot;</span><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ld_util.send_create is a function in the utility libraries we loaded. All it really does is set a couple of standard headers and send an HTTP POST message. The URL we send the post to is the first argument &ndash; &ldquo;&rdquo; - the null relative address, which is equivalent to &ldquo;localhost:3007/tt&rdquo;, since that is the url the browser is on. The object we send in the POST body also has its _subject set to the null relative address, but this address will be interpreted as being relative to the to-be-created resource, not the container we&rsquo;re POSTing to.</p>
+
+<p>You can see from the request that the server responded with &lsquo;201 Created&rsquo; and the response body is the newly-created resource. The server also returned a &lsquo;Location&rsquo; response header with the URL of the newly-created resource. If we click on this URL in the console window, we will see this:</p>
+
+<p><img src="images/image02.png" alt="" /></p>
+
+<p>[Note that this resource is being displayed by the same application (/tutorial/application.js) that displayed the collection.] If you look at the source for /tt/13.2, it looks like this:</p>
+
+<p><img src="images/image05.png" alt="" /></p>
+
+<p>If you refresh the container (it is still in the previous tab), it now looks like this:</p>
+
+<p><img src="images/image00.png" alt="" /></p>
+
+<p>Even without worrying about the detail &ndash; explained later &ndash; you can see there is a new member in the container.</p>
+
+<p>In the previous example, we POSTed to a container whose URL is &lsquo;/tt&rsquo;. This container is useful for bootstrapping, because it pre-exists without us doing anything, but it is better for applications to create their containers explicitly. Suppose I have an application that needs one container for &lsquo;friends&rsquo; and another for &lsquo;family&rsquo;. We could use &lsquo;/friends&rsquo; and &lsquo;/family&rsquo; for this purpose, but doing so has at least two disadvantages:</p>
+
+<ol>
+<li> You will have to update the routing tables of the reverse proxy each time I add another container</li>
+<li> The contents of &lsquo;/friends&rsquo; and &lsquo;/family&rsquo; will be stored in different database collections, so I will not be able to do any queries that span both of them</li>
+</ol>
+
+
+<p>Fortunately the alternative is very simple. I can execute these two statements:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">req</span> <span class="o">=</span> <span class="nx">ld_util</span><span class="p">.</span><span class="nx">send_create</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">_subject</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">rdf_type</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">rdf_util</span><span class="p">.</span><span class="nx">URI</span><span class="p">(</span><span class="s2">&quot;[http://open- services.net/ns/basicProfile#Container](http://www.google.com/url?q=http%3A%2F %2Fopenservices.net%2Fns%2FbasicProfile%23Container&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNGpp 0PHvTcHtI4l3ho9BiDoHhvDrA)&quot;</span><span class="p">),</span>
+</span><span class='line'>    <span class="nx">bp_membershipPredicate</span><span class="o">:</span> <span class="s1">&#39;friend&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">bp_membershipSubject</span><span class="o">:</span> <span class="k">new</span> <span class="nx">rdf_util</span><span class="p">.</span><span class="nx">URI</span><span class="p">(</span><span class="s1">&#39;[http://localhost:3007/](http://www.g oogle.com/url?q=http%3A%2F%2Flocalhost%3A3007%2F&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNEKf- xaxbl3WGyePWerq7u-Fjuq4A)&#39;</span><span class="p">)}</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">req</span> <span class="o">=</span> <span class="nx">ld_util</span><span class="p">.</span><span class="nx">send_create</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">_subject</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">rdf_type</span><span class="o">:</span> <span class="k">new</span> <span class="nx">rdf_util</span><span class="p">.</span><span class="nx">URI</span><span class="p">(</span><span class="s2">&quot;[http://open- services.net/ns/basicProfile#Container](http://www.google.com/url?q=http%3A%2F %2Fopen-services.net%2Fns%2FbasicProfile%23Container&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNGpp 0PHvTcHtI4l3ho9BiDoHhvDrA)&quot;</span><span class="p">),</span>
+</span><span class='line'>    <span class="nx">bp_membershipPredicate</span><span class="o">:</span> <span class="s1">&#39;familyMember&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">bp_membershipSubject</span><span class="o">:</span> <span class="k">new</span> <span class="nx">rdf_util</span><span class="p">.</span><span class="nx">URI</span><span class="p">(</span><span class="s1">&#39;[http://localhost:3007/](http://www.g oogle.com/url?q=http%3A%2F%2Flocalhost%3A3007%2F&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNEKf- xaxbl3WGyePWerq7u-Fjuq4A)&#39;</span><span class="p">)}</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>These two statements will create new resources with URLs something like &lsquo;/tt/1.3&rsquo; and &lsquo;/tt/1.4&rsquo; respectively. Each of these is a container, just like &lsquo;/tt&rsquo;.</p>
+
+<p>I can now execute these statements:</p>
+
+<p>req = ld_util.send_create(&lsquo;/tt/1.3&rsquo;, {_subject : &lsquo;&rsquo;, name : &lsquo;Jane&rsquo;})</p>
+
+<p>req = ld_util.send_create(&lsquo;/tt/1.3&rsquo;, {_subject : &lsquo;&rsquo;, name : &lsquo;Alice&rsquo;})</p>
+
+<p>req = ld_util.send_create(&lsquo;/tt/1.4&rsquo;, {_subject : &lsquo;&rsquo;, name : &lsquo;Steve&rsquo;})</p>
+
+<p>req = ld_util.send_create(&lsquo;/tt/1.4&rsquo;, {_subject : &lsquo;&rsquo;, name : &lsquo;Dennis&rsquo;})</p>
+
+<p>This will create resources &lsquo;/tt/1.5&rsquo;, &lsquo;/tt/1.6&rsquo;, &lsquo;/tt/1.7&rsquo;, and &lsquo;/tt/1.8&rsquo;. If you now do a GET on &lsquo;/tt/1.3&rsquo; and &lsquo;/tt/1.4&rsquo; you will see their contents as expected.</p>
+
+<p>The exact meaning of the predicates bp_membershipPredicate and bp_membershipSubject will become clear in the next section.</p>
+
+  
+    <footer>
+      <p class="meta">
+        
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-02T11:22:00-04:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2014</time>
+        
+      </p>
+      
+        <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ld4apps.github.io/developing-lda-applications/index.html" data-via="" data-counturl="http://ld4apps.github.io/developing-lda-applications/index.html" >Tweet</a>
+  
+  
+  
+</div>
+
+      
+    </footer>
+  
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Guides</h1>
+  <ul id="Pages">
+    
+    	
+    	
+    
+    	
+    	
+    
+    	
+    	
+    
+    	
+        <li class="page">
+            <a href="/developing-lda-applications/index.html">Developing LDA Applications</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/index.html">Getting Started</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/lda-client-libraries/index.html">lda client libraries</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/mpnally-tutorial/index.html">Original mpnally Tutorial</a>
+        </li>
+        
+    
+    	
+    	
+    
+    	
+        <li class="page">
+            <a href="/what-is-this-rdf-thing/index.html">what is this rdf thing?</a>
+        </li>
+        
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/ld4apps">@ld4apps</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'ld4apps',
+            count: 20,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

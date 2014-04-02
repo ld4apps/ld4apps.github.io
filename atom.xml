@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Linked Data for Applications (LDA)]]></title>
+  <link href="http://ld4apps.github.io/atom.xml" rel="self"/>
+  <link href="http://ld4apps.github.io/"/>
+  <updated>2014-04-02T11:53:08-04:00</updated>
+  <id>http://ld4apps.github.io/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hello World]]></title>
+    <link href="http://ld4apps.github.io/blog/2014/04/02/hello-world/"/>
+    <updated>2014-04-02T09:35:46-04:00</updated>
+    <id>http://ld4apps.github.io/blog/2014/04/02/hello-world</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
+  
+</feed>
