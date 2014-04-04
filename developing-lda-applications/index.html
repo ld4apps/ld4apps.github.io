@@ -115,7 +115,7 @@
 
 <h3>application.js</h3>
 
-<p>This is a Javascript file that implements your client application, which is usually a mobile or web user interface. This file, and any others it references, can be anywhere on the web &ndash; they do not have to be on your business logic server. <em>application.js</em> can do anything it wants, but the following example file will take advantage of the libraries that LDA provides to support REST and RDF, and still let your application do pretty much anything it wants.</p>
+<p>This is a Javascript file that implements your client application, which is usually a mobile or web user interface. This file, and any others it references, can be anywhere on the web &ndash; they do not have to be on your business logic server. An <em>application.js</em> file can do anything it wants, but the following example file will take advantage of the libraries that LDA provides to support REST and RDF, and still let your application do pretty much anything it wants.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -142,7 +142,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>As you can see, what this code basically does is load the LDA <em>utils.js</em> client libarary (see <a href="https://github.com/ld4apps/lda-clientlib">lda-clientlib</a>) first, and then loads <em>application.html</em> which is a file you will write. If you choose to use the LDA client libraries (which we recommend) your <em>application.html</em> must contain an html body, but no html, header or body tags. Other than that, you can put whatever you like in it &ndash; it can load and execute whatever javascript libraries it likes, and include whatever html it likes. A very reasonable thing to do is to use this &lsquo;standard&rsquo; implementation of <em>application.js</em> shown above unmodified and consider <em>application.html</em> as being the real &lsquo;root&rsquo; of your UI application. This is, after all, the normal way you build a web or mobile application &ndash; it all starts with your root html file. We will explain more later on this.</p>
+<p>As you can see, what this code basically does is load the LDA <em>utils.js</em> client libarary on line 5 (see <a href="https://github.com/ld4apps/lda-clientlib">lda-clientlib</a>) first, and then loads <em>application.html</em> on line 7, which is a file you will write. If you choose to use the LDA client libraries (which we recommend) your <em>application.html</em> must contain an html body, but no html, header or body tags. Other than that, you can put whatever you like in it &ndash; it can load and execute whatever javascript libraries it likes, and include whatever html it likes. A very reasonable thing to do is to use the &lsquo;standard&rsquo; implementation of <em>application.js</em> shown above unmodified and consider <em>application.html</em> as being the real &lsquo;root&rsquo; of your UI application. This is, after all, the normal way you build a web or mobile application &ndash; it all starts with your root html file. We will explain more later on this.</p>
 
 <p>If you look at the &lsquo;Todo List&rsquo; application&rsquo;s version of <em>application.js</em>, you&rsquo;ll notice that it is slightly more complicated than the simplest &lsquo;standard&rsquo; one above. It looks like this:</p>
 
@@ -189,7 +189,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>As you can see, the only difference is that instead of loading the single <em>applications.html</em> file, it constructs and passes a simple type-to-file map, instucting the framework to load one of several (in this case 2) html files, depending on the (RDF) type of the resource being loaded. If the resource is a (todo) item, we load <em>item.html</em> to display the individual item. If the resource is a container, we load <em>list.html</em> to display the todo list iteself. This demonstrates the fundamental pattern that the LDA framework uses to implement <a href="http://ld4apps.github.io/lda-client-libraries/index.html">Single Page Applictions (SPAs)</a>. We&rsquo;ll look at the &lsquo;Todo List&rsquo; client implementation in more detail below.</p>
+<p>As you can see, the only difference is that instead of loading the single <em>applications.html</em> file on line 15, it constructs and passes a simple type-to-file map, instructing the framework to load one of several (in this case 2) html files, depending on the (RDF) type of the resource being loaded. If the resource is a (todo) item, we load <em>item.html</em> to display the individual item. If the resource is a container, we load <em>list.html</em> to display the todo list iteself. This demonstrates the fundamental pattern that the LDA framework uses to implement <a href="http://ld4apps.github.io/lda-client-libraries/index.html">Single Page Applictions (SPAs)</a>. We&rsquo;ll look at the &lsquo;Todo List&rsquo; client implementation in more detail below.</p>
 
 <p>The &lsquo;Todo List&rsquo; sample includes a couple of other things any LDA application typically needs:</p>
 
