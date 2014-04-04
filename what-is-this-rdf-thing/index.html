@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>What Is This Rdf Thing? - Linked Data for Applications (LDA)</title>
+  <title>What Is This RDF Thing? - Linked Data for Applications (LDA)</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="What Is This Rdf Thing? Mar 28th, 2014 Before you can use the server-implementation part of the LDA framework, you will need some understanding of &hellip;">
+  <meta name="description" content="What Is This RDF Thing? Mar 28th, 2014 Before you can use the server-implementation part of the LDA framework, you will need some understanding of &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -38,7 +38,7 @@
   <header role="banner"><hgroup>
   <h1><a href="/">Linked Data for Applications (LDA)</a></h1>
   
-    <h2>Resource Oriented Computing for Systems of Systems</h2>
+    <h2>Composite Apps for the Cloud</h2>
   
 </hgroup>
 
@@ -56,8 +56,9 @@
 </form>
   
 <ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/">Home</a></li>
+  <li><a href="/blog/">Blog</a></li>
+  <li><a href="/blog/archives/">Archives</a></li>
 </ul>
 
 </nav>
@@ -67,7 +68,7 @@
 <article role="article">
   
   <header>
-    <h1 class="entry-title">What Is This Rdf Thing?</h1>
+    <h1 class="entry-title">What Is This RDF Thing?</h1>
     <p class="meta">
 
 
@@ -125,7 +126,7 @@
 </table>
 
 
-<p>Now, what would <a href="http://az.com/review_1,">http://az.com/review_1,</a> for example, look like in JSON? A typical JSON programmers would probably suggest something like this:</p>
+<p>Now, what would <a href="http://az.com/review_1,">http://az.com/review_1,</a> for example, look like in JSON? A programmer familiar with JSON would probably suggest something like this:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -200,7 +201,7 @@
 </table>
 
 
-<p>It is clear this is a set of property-value pairs, but it is less clear what they are the property-values of. A JSON programmer would probably say that they are the values for the review whose representation this is. In other words, if you do a GET on the review <a href="http://az.com/review_1">http://az.com/review_1</a> then you can assume that the property values returned are the property values of <a href="http://az.com/review_1.">http://az.com/review_1.</a> Although this assumption sounds reasonable, it actually turns out to be a problem in more complex cases even for the native JSON programmer (see the next example), so we are going to remove this assumption by making the information explicit. We do this by adding a new JSON property, as follows.</p>
+<p>It is clear this is a set of property-value pairs, but it is less clear what they are the property-values of. Our JSON programmer would probably say that they are the values for the review whose representation this is. In other words, if you do a GET on the review <a href="http://az.com/review_1">http://az.com/review_1</a> then you can assume that the property values returned are the property values of <a href="http://az.com/review_1.">http://az.com/review_1.</a> Although this assumption sounds reasonable, it turns out to be a problem in more complex cases (see the next example) and implicit assumptions often turn into problems later, even in simple cases, so we are going to remove the assumption by making the information explicit. We do this by adding a new JSON property, as follows.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -342,13 +343,13 @@
 </ol>
 
 
-<p>We will add a caution here. In its essence, RDF really is as simple as described above, but the fact that it is simple does not make it easy. It takes some time to really understand the implications of this simple model, and to unlearn false assumptions one is typically carrying over from an object-oriented way of thinking.</p>
+<p>We will add a caution here. In its essence, RDF really is as simple as described above, but the fact that it is simple does not make it easy. It takes some time to really understand the implications of this simple model, and to unlearn assumptions one is typically carrying over from an object-oriented way of thinking that do not apply in RDF.</p>
 
-<p>If our warning came too late and you have already done some Googling on RDF, let&rsquo;s relate this to what you might have seen. The three-column table above is a rendering of the standard RDF &ldquo;graph of triples&rdquo; &ndash; each row describes one triple. RDF calls sets of triples like these &lsquo;graphs&rsquo;, and the standard tutorial material usually emphasizes how you can match URL values in the left column with URL values in the right column to form a graph from the table. In our experience it&rsquo;s often more useful to think of a set of RDF triples as a simple table than as a graph. Also, there is a W3C recommendation called JSON-LD that specifies an &lsquo;approved&rsquo; version of what we just did with <em>subject. Unfortunately, JSON-LD says you should use &ldquo;@id&rdquo; instead of &ldquo;</em>subject&rdquo;, but since that choice is awkward to deal with in some programming languages (e.g. Javascript), and totally incompatible with some popular programming libraries, we don&rsquo;t recommend (or implement) spec compliance on this point. JSON-LD is a very large specification with many options &ndash; what we just did above is compatible with just one important option in the spec (if you ignore the details).</p>
+<p>If our warning came too late and you have already done some Googling on RDF, let&rsquo;s relate this to what you might have seen. The three-column table above is a rendering of the standard RDF &ldquo;graph of triples&rdquo; &ndash; each row describes one triple. RDF calls sets of triples like these &lsquo;graphs&rsquo;, and the standard tutorial material usually emphasizes how you can match URL values in the left column with URL values in the right column to form a graph (potentially multiple disconnected graphs) from the table. In our experience it&rsquo;s often more useful to think of a set of RDF triples as a simple table than as a graph. Also, there is a W3C recommendation called JSON-LD that specifies an &lsquo;approved&rsquo; version of what we just did with &ldquo;_subject&rdquo;. Unfortunately, JSON-LD says you should use &ldquo;@id&rdquo; instead of &ldquo;_subject&rdquo;, but since that choice is awkward to deal with in some programming languages (e.g. Javascript), and incompatible with some popular programming libraries, we don&rsquo;t recommend (or implement) spec compliance on this point. JSON-LD is a large specification with many options &ndash; what we just did above is compatible with just one important option in the spec (if you ignore the details).</p>
 
 <p><em>Those of you with sharp eyes for detail may have noticed a little irony in the RDF table above. In the first column we used &ldquo;&rdquo; to mean ditto to avoid repeating the long URL at the top of the column. However, &ldquo;&rdquo; could also be interpreted literally to mean the empty string, which is also a valid URL &ndash; it is the null relative URL &ndash; which happens to also be a correct URL value in this case, where the representation is the result of a GET on the longer url.</em></p>
 
-<p>If you are not yet convinced that you should care about RDF. a reasonable reaction to the above discussion might be &ldquo;OK, it makes sense, and it&rsquo;s not difficult to do, but really, I was doing fine without this, and I have more pressing problems to solve, so why would I care?&rdquo;. Let&rsquo;s try another example.</p>
+<p>You may not be convinced yet that you should care about RDF. A reasonable reaction to the above discussion might be &ldquo;OK, it makes sense, and it&rsquo;s not difficult to do, but really, I was doing fine without this, and I have more pressing things to work on&rdquo;. Let&rsquo;s look at another example to try to convince you.</p>
 
 <h3>RDF for JSON programmers &ndash; lesson 2</h3>
 
@@ -363,7 +364,7 @@
 
 <p><em>You would find this URL inside the representation of <a href="http://az.com/product_1">http://az.com/product_1</a> and you would not try to guess it by postpending &lsquo;review&rsquo; to the stringified URL of the product.</em></p>
 
-<p>If we asked the same JSON programmer that we asked before to give us the JSON for this collection of resources, you would probably get this:</p>
+<p>If we asked the same JSON programmer that we asked before to give us the JSON for this collection of resources, she might suggest this:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -378,7 +379,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>If the representation of a collection only contains the URLs of the collection&rsquo;s members, it&rsquo;s not very convenient for a client, because most use-cases will require the client to then fetch each member of the collection individually via HTTP GET. Even without input from us, our JSON programmer would probably be pushed by client colleagues to enhance the representation to be something more like this:</p>
+<p>If the representation of a collection only contains the URLs of the collection&rsquo;s members, it&rsquo;s not very convenient for a client, because most use-cases will require the client to then fetch each member of the collection individually via HTTP GET. Even without input from us, our JSON programmer would probably be pushed by her client colleagues to enhance the representation to be something more like this:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -439,7 +440,7 @@
 
 <p>Notice that our programmer had to invent &ldquo;_subject&rdquo; (or some synonym for that concept) for this case &ndash; even without having seen our first RDF lesson &ndash; because the outer context can no longer be depended on to know what resources the information pertains to. This means that the programmer was already using a homemade form of RDF, but had not formalized it and was not doing it consistently. What we have found is that there are many cases like this where a common design issue in JSON has a very natural solution when you view things from an RDF perspective. Taking advantage of the work that has been done by a community of smart people to formalize the RDF model helps architects with overall design integrity, at the cost of having to read and decode the RDF literature. Alternatively, you can build on the LDA framework and have a lot of it done for you <g>.</p>
 
-<p>Even though each entry already has a &lsquo;_subject&rsquo;, we are still relying on context to convey implicit information in this example &ndash; there is nothing in the data that tells us that these reviews are the members of the collection. Here is the table of triples that can be derived from the data as it currently appears:</p>
+<p>Even though each entry already has a &lsquo;_subject&rsquo;, we are still relying on context to convey another piece of implicit information in this example &ndash; there is nothing in the data that tells us that these reviews are the members of the collection. Here is the table of triples that can be derived from the data as it currently appears:</p>
 
 <table>
 <thead>
@@ -634,7 +635,7 @@ representation, it must mean that they are members of the collection. Since we d
 
 <p><em>Note that the _subject JSON property of the reviews is playing double-duty here &ndash; it is defining the subject of the property-values within the nested JSON objects for the reviews, and it is defining the values of the &lsquo;member&rsquo; property for the outer JSON object that represents the collection.</em></p>
 
-<p>In this example, we forced the programmer to complicate the representation of the collection with an extra level of nesting. However, it&rsquo;s quite likely that would have needed to be done anyway. Suppose for example, that we decide to record other information for the collection, like the time of the last update, or the number of entries &ndash; there are many plausible property values for a collection. The simplest way of adding these properties is to organize the data the way we have shown.</p>
+<p>In this example, we forced the programmer to complicate the representation of the collection with an extra level of nesting. However, it&rsquo;s quite likely that she would have needed to be done anyway. Suppose for example, that we decide to record other information for the collection, like the time of the last update, or the number of entries &ndash; there are many plausible property values for a collection. The simplest way of adding these properties is to organize the data the way we have shown.</p>
 
 <p>Hopefully we have convinced you that our conversion to the RDF data model has preserved the simplicity and intuitiveness of the JSON a programmer originally came up with and that the changes we imposed were pretty desirable ones anyway.</p>
 
@@ -818,9 +819,9 @@ representation, it must mean that they are members of the collection. Since we d
 
 <p>All we did was reverse the direction of the triple &ndash; instead of saying &ldquo;review_1 is a review of product_1&rdquo;, we reversed it to say &ldquo;product_1 is reviewed in review_1&rdquo;. This information is still held in the representation of the review, not the product, and the information is entirely equivalent &ndash; all we did was change the way we stated it.</p>
 
-<p>Although this change was trivial and inconsequential at the RDF level, it is now more complicated to put this information back into a JSON format &ndash; try it. <em>Hint &ndash; the representation of each review will become more complex &ndash; you will need two JSON objects instead of one to hold the information, but &ndash; surprisingly &ndash; the representation of the collection <a href="http://az.com/product_1/reviews">http://az.com/product_1/reviews</a> magically becomes simpler &ndash; we no longer have to invent membership triples.</em></p>
+<p>Although this change was trivial and inconsequential at the RDF level, it is now more complicated to put this information back into a JSON format &ndash; try it. <em>Hint &ndash; the representation of each review will become more complex &ndash; you will need two JSON objects instead of one to hold the information, but &ndash; surprisingly &ndash; the representation of the collection <a href="http://az.com/product_1/reviews">http://az.com/product_1/reviews</a> becomes simpler &ndash; we no longer have to invent membership triples.</em></p>
 
-<p>RDF also allows us to correct a conceptual problem with the data in the original example. The properties &lsquo;found_helpful&rsquo; and &lsquo;found_helpful_or_not&rsquo; are clearly properties of the review &ndash; they are trying to indicate how good the review is. However &lsquo;stars&rsquo; is not really a property of the review at all &ndash; it&rsquo;s trying to say how good the product is, not how good the review is. As a human who speaks English, we can use common sense to figure this out, but if a machine tried, or if the example had been done in a language we don&rsquo;t know, it couldn&rsquo;t be figured out. RDF gives us an easy way to correct this, by changing the table for the review to this:</p>
+<p>RDF also allows us to correct a conceptual problem with the data in the original example. The properties &lsquo;found_helpful&rsquo; and &lsquo;found_helpful_or_not&rsquo; are clearly properties of the review &ndash; they are trying to indicate how good the review is. However &lsquo;stars&rsquo; is not a property of the review at all &ndash; it&rsquo;s trying to say how good the product is, not how good the review is. As humans who speak English, we can use common sense to figure this out, but a computer (other than IBM&rsquo;s Watson, perhaps) can&rsquo;t figure it out, and if the example had been done in a language I didn&rsquo;t know, I couldn&rsquo;t figure it out either. RDF gives us an easy way to correct this, by changing the table for the review to this:</p>
 
 <table>
 <thead>
@@ -935,7 +936,7 @@ representation, it must mean that they are members of the collection. Since we d
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>With our more liberal version of RDF/JSON (The specification in the W3C note does not allow the values of properties to be simple strings and numbers as shown here &ndash; they have to be structures. This makes programming tedious, so our implementation is more liberal), instead of introducing &lsquo;_subject&rsquo;, you do this:</p>
+<p>With [our slightly more liberal version of] RDF/JSON , instead of introducing &lsquo;_subject&rsquo;, you do this:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -951,14 +952,14 @@ representation, it must mean that they are members of the collection. Since we d
 <span class='line-number'>12</span>
 </pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
 </span><span class='line'>    <span class="nt">&quot;http://az.com/review_1&quot;</span><span class="p">:</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
-</span><span class='line'>    <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">192</span><span class="p">,</span>
-</span><span class='line'>    <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-</span><span class='line'>    <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;Good little Wifi Adapter&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_1&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>    <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I purchased this to add wireless connectivity to my Raspberry Pi [...]&quot;</span>
+</span><span class='line'>        <span class="nt">&quot;found_helpful&quot;</span> <span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;found_helpful_or_not&quot;</span> <span class="p">:</span><span class="mi">192</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;stars&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;title&quot;</span> <span class="p">:</span> <span class="s2">&quot;Good little Wifi Adapter&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;reviewer&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/reviewer_1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;reviewOf&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://az.com/product_1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;verified_purchase&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>        <span class="nt">&quot;text&quot;</span> <span class="p">:</span> <span class="s2">&quot;I purchased this to add wireless connectivity to my Raspberry Pi [...]&quot;</span>
 </span><span class='line'>    <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
@@ -966,7 +967,7 @@ representation, it must mean that they are members of the collection. Since we d
 
 <p>The JSON &lsquo;names&rsquo; at the outer level are not property names, they are the URLs of the subjects of the property/value pairs in the inner objects.</p>
 
-<p>With RDF/JSON, you do not nest additional JSON objects the way we saw before with the JSON-LD-inspired format. If you take our container example from above, it could look like the following in RDF/JSON. [Note this differs in some details from what we do in LDA framework &ndash; we&rsquo;ll show you what we really do later.]</p>
+<p>With RDF/JSON, you do not nest additional JSON objects the way we saw before with the JSON-LD-inspired format. If you take our container example from above, it would look something like the following in RDF/JSON. [Note this differs in some details from what we do in LDA framework &ndash; we&rsquo;ll show you what we really do later.]</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1065,46 +1066,62 @@ representation, it must mean that they are members of the collection. Since we d
 <aside class="sidebar">
   
     <section>
-  <h1>Pages</h1>
+  <h1>Guides</h1>
   <ul id="Pages">
     
-        <li class="page">
-            <a href="/atom.xml"></a>
-        </li>
+    	
+    	
     
-        <li class="page">
-            <a href="/blog/archives/index.html">Blog Archive</a>
-        </li>
+    	
+    	
     
-        <li class="page">
-            <a href="/getting-started/index.html">LDA - Linked Data For Applications</a>
-        </li>
+    	
+    	
     
+    	
         <li class="page">
-            <a href="/index.html"></a>
+            <a href="/developing-lda-applications/index.html">Developing LDA Applications</a>
         </li>
+        
     
+    	
         <li class="page">
-            <a href="/lda-client-libraries/index.html">lda client libraries</a>
+            <a href="/downloading-the-software/index.html">Downloading the Software</a>
         </li>
+        
     
+    	
         <li class="page">
-            <a href="/mpnally-tutorial/index.html">Original mpnally Tutorial</a>
+            <a href="/index.html">Welcome to LDA</a>
         </li>
+        
     
+    	
         <li class="page">
-            <a href="/robots.txt"></a>
+            <a href="/lda-client-libraries/index.html">LDA Client Libraries</a>
         </li>
+        
     
+    	
         <li class="page">
-            <a href="/what-is-this-rdf-thing/index.html">what is this rdf thing?</a>
+            <a href="/lda-server-libraries/index.html">LDA Server Libraries</a>
         </li>
+        
     
-  </ul>
-</section>
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
+    	
+        <li class="page">
+            <a href="/mpnally-tutorial/index.html">Original Mpnally Tutorial</a>
+        </li>
+        
+    
+    	
+    	
+    
+    	
+        <li class="page">
+            <a href="/what-is-this-rdf-thing/index.html">What Is This RDF Thing?</a>
+        </li>
+        
     
   </ul>
 </section>

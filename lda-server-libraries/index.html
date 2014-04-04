@@ -1,0 +1,301 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>LDA Server Libraries - Linked Data for Applications (LDA)</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="LDA Server Libraries Apr 2nd, 2014 The following diagram attempts to explain the overall structure of the framework Standard WSGi Server The &lsquo; &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ld4apps.github.io/lda-server-libraries">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Linked Data for Applications (LDA)" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Linked Data for Applications (LDA)</a></h1>
+  
+    <h2>Composite Apps for the Cloud</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:ld4apps.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/blog/">Blog</a></li>
+  <li><a href="/blog/archives/">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">LDA Server Libraries</h1>
+    <p class="meta">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-02T13:13:00-04:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2014</time></p>
+  </header>
+  
+  <p>The following diagram attempts to explain the overall structure of the framework</p>
+
+<p><img src="images/image12.png" alt="" /></p>
+
+<h3>Standard WSGi Server</h3>
+
+<p>The &lsquo;Standard WSGi Server&rsquo; code of the framework has the following functions:</p>
+
+<ol>
+<li> Accept requests from users. Any request body is expected to be in any one of many RDF formats, including RDF/JSON and &lsquo;simple JSON&rsquo;. (If you use our client library, it will almost always use the RDF/JSON format)</li>
+<li> Translate the request body to a set of Python objects &ndash; dictionaries, arrays and literal values. The organization of these Python objects matches the organization of the RDF/JSON serialization format, regardless of the original serialization format.</li>
+<li> Call the appropriate Business Logic Layer function &ndash; create(), get(), update(), delete(), transform() and action(). Create, get, update and delete should be self-explanatory. transform is a form of POST that does not create a new thing, and is &lsquo;safe&rsquo; (no side-effects) in the technical sense of &lsquo;safe&rsquo; as described in the HTTP spec. Transform takes a resource representation on input and produces another on output. Query processors are an example of transforms. A fahrenheit to centigrade converter would be another. We currently model login as a transform. Action is a POST with side-effects. Logout is modelled as an action.</li>
+<li> Return a result. The business logic layer will return a status code, a set of RDF/JSON-structured python objects and potentially headers. The standard server will convert those python objects into the representation that was requested by the client. This includes HTML &ndash; the only HTML that ever comes out the server is RDFa HTML calculated mechanically by the standard server from RDF/JSON-structured python objects. [Errors are not in RDF format &ndash; they are an array of pairs].</li>
+</ol>
+
+
+<p>The standard WSGi server is not big or complex &ndash; it stands at around 450 lines of Python at the moment, although a commercial-quality one with good error checking, good logging and so on would probably be a few times bigger.</p>
+
+<h3>Standard Business Logic</h3>
+
+<p>The job of the business logic layer is to implement the CRUD+transform+action methods of the application. It can do this however it likes &ndash; by calculation, by accessing other REST resources, by accessing SOA services, or by accessing persistent storage systems. The pattern where a resource on the web is backed by some persistence entity in a storage system is so pervasive &ndash; even amongst applications that do other things in addition &ndash; that we provide a default implementation that does this that your business logic can subclass. this implementation is in the Standard Business Logic Layer. Its responsibilities are the following:</p>
+
+<ol>
+<li> Taking a CREATE (POST) request from the WSGi server and turning it into a corresponding insert into the storage tier. The representation of the to-be-created resource is RDF</li>
+<li> Taking a GET request from the WSGi server and translating it into a retrieve of a single entity on the storage system. The representation of the retrieved storage entity  is RDF</li>
+<li> Taking a DELETE request from the WSGi server and translating it into a delete of a single entity on the storage system.</li>
+<li> Taking a PATCH request from the WSGi server and translating it into an update of an entity on the storage system. The representation of the to-be-created resource is RDF</li>
+<li> Taking a transform (POST) request from the WSGi server and translating it into query on the storage system. The representation of the query resource is structured like RDF/JSON with some tweaks (see the section on query) and the result is pure RDF.</li>
+<li> Providing a default implementation of &lsquo;virtual&rsquo; container resources that are calculated from queries. This includes the ability to POST to these resources as well as to GET them. It also includes augmenting the representation of other resources to point to these virtual resources. (Note to self &ndash; should this not be in a library that can be used without having to subclass?)</li>
+<li> Augmenting each resource with a reference to a &lsquo;virtual&rsquo; container that lists the historic versions of the resource.</li>
+</ol>
+
+
+<p>The Standard Business Logic Server is also not big &ndash; it is under 650 lines &ndash; although would be a couple of times bigger if it were refined to commercial quality.</p>
+
+<h3>Persistence Store Adapter</h3>
+
+<p>Each Persistence Store Adapter has the same CRUD+Query interface, and all inputs and outputs are RDF/JSON-organized python objects. To date we only have a MongoDB adapter. The responsibilities of the Persistence store adapter are:</p>
+
+<ol>
+<li> Implement CRUD+query methods</li>
+<li> On create, take RDF/JSON-structured python objects on input and store them in some form in the database. Make sure that URLs that point anywhere within the current system &ndash; even if it is in a different sub-system from the one doing the create &ndash; are stored in a form that will allow the domain name of the system proxy server to change without invalidating any data in the database. Changing the proxy server domain name can happen for operational reasons or because the system was cloned.</li>
+<li> On retrieve of a single entity, access the data store and return the resource in RDF/JSON-organized python objects. Make sure all URLs that point to other resources in the same system &ndash; even if they are on a different subsystem &ndash; use the current domain name of the system, not the one that was current when the resource was stored or updated.</li>
+<li> On update of a resource, modify those parts of the stored resource that are referenced by the PATCH input, which is in the form of RDF/JSON-organized python objects. The resource to be updated is specified by its URL. Make sure any triples in the resource that are not referenced by the PATCH are preserved unmodified. We do not support PUT for update (i.e. there is no update that will blow away al data not referenced in the update). See a later section for more detail on the PATCH format.</li>
+<li> Execute queries on the data. The query is in the form of RDF/JSON-organized Python objects with a few extensions. See a later section for details.</li>
+<li> Delete entities from the database. The entity to be deleted is identified by its URL.</li>
+</ol>
+
+
+<p>This currently comprises about 500 lines of Python, although a commercial- quality version would probably be a couple of times that.</p>
+
+  
+    <footer>
+      <p class="meta">
+        
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-02T13:13:00-04:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2014</time>
+        
+      </p>
+      
+        <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ld4apps.github.io/lda-server-libraries/index.html" data-via="" data-counturl="http://ld4apps.github.io/lda-server-libraries/index.html" >Tweet</a>
+  
+  
+  
+</div>
+
+      
+    </footer>
+  
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Guides</h1>
+  <ul id="Pages">
+    
+    	
+    	
+    
+    	
+    	
+    
+    	
+    	
+    
+    	
+        <li class="page">
+            <a href="/developing-lda-applications/index.html">Developing LDA Applications</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/downloading-the-software/index.html">Downloading the Software</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/index.html">Welcome to LDA</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/lda-client-libraries/index.html">LDA Client Libraries</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/lda-server-libraries/index.html">LDA Server Libraries</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/mpnally-tutorial/index.html">Original Mpnally Tutorial</a>
+        </li>
+        
+    
+    	
+    	
+    
+    	
+        <li class="page">
+            <a href="/what-is-this-rdf-thing/index.html">What Is This RDF Thing?</a>
+        </li>
+        
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/ld4apps">@ld4apps</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'ld4apps',
+            count: 20,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
