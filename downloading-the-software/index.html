@@ -114,27 +114,58 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>The four github repositories are now available in the following subdirectories:</p>
+<p>The four github repositories should now be in the following subdirectories:</p>
 
 <ol>
-<li><a href="https://github.com/ld4apps/lda-clientlib/blob/master/README.md">lda-clientlib</a> &ndash; Javascript libraries for LDA client application development</li>
-<li><a href="https://github.com/ld4apps/lda-serverlib/blob/master/README.md">lda-serverlib</a> &ndash; Python libraries for LDA server application development</li>
-<li><a href="https://github.com/ld4apps/lda-siteserver/blob/master/README.md">lda-siteserver</a> &ndash; standard system functions for LDA applications &ndash; authentication, access control and multi-tenancy</li>
-<li><a href="https://github.com/ld4apps/lda-examples/blob/master/README.md">lda-examples</a> &ndash; LDA example applications</li>
+<li><a href="https://github.com/ld4apps/lda-clientlib/">lda-clientlib</a> &ndash; Javascript libraries for LDA client application development</li>
+<li><a href="https://github.com/ld4apps/lda-serverlib/">lda-serverlib</a> &ndash; Python libraries for LDA server application development</li>
+<li><a href="https://github.com/ld4apps/lda-siteserver/">lda-siteserver</a> &ndash; standard system functions for LDA applications &ndash; authentication, access control and multi-tenancy</li>
+<li><a href="https://github.com/ld4apps/lda-examples/">lda-examples</a> &ndash; LDA example applications</li>
 </ol>
 
 
-<p>There are several sample application in the <strong>lda-examples</strong> repository you can look at and run.
-Note that the 4 repositories must be downloaded in sibling directories as instructed above in order to run the examples.</p>
+<p>There are several <a href="https://github.com/ld4apps/lda-examples/blob/master/README.md">sample application</a>
+in the lda-examples repository you can look at and run.
+Note that the 4 repositories must be downloaded in sibling directories, as instructed above, in
+order to run the examples.</p>
 
-<p>The LDA framework requires a running back-end database for storing the data and an adapter
-that matches the database to the REST/RDF assumptions of the application.
-The adapter currently available (in <strong>lda-serverlib</strong>) is for
-<a href="https://www.mongodb.org/">MongoDB</a>. Rather than installing and running MongoDB yourself,
-the <strong>lda-examples</strong> project includes a Vagrantfile that can be used to start a MongoDB server
-as well as an Nginx reverse proxy server, needed for some of the examples.</p>
+<h2>Setting up Database and Reverse Proxy Servers</h2>
 
-<p>Before you run the examples, you first need to download/install the following:</p>
+<p>The LDA framework requires a running back-end database for storing application data. Most non-trivial LDA
+applications also require a reverse proxy web server configured to route requests to appropriate
+application subsystems. Currently, LDA uses/supports <a href="https://www.mongodb.org/">MongoDB</a> for
+the database and we usually use Nginx for the reverse proxy server.
+Before you can do much with the LDA framework, you will need one or both of these servers to be running.</p>
+
+<h3>Starting MongoDB</h3>
+
+<p>If you are getting started with LDA and just want to follow along with the
+<a href="/developing-lda-applications/index.html">Todo Sample Tutorial</a>, the fastest way to
+get set up is to simply go to the <a href="https://www.mongodb.org/downloads">MongoDB download page</a>
+and download the appropriate version for your OS.</p>
+
+<p>Once MongoDB has downloaded, execute the following commands:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> &lt;mongodb-installation-directory&gt;/bin
+</span><span class='line'>mongod
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point, MonoDB should be running and listening on its default host and port (localhost:27017).
+You should now be able to run the &lsquo;Todo Sample&rsquo; in the
+<a href="https://github.com/ld4apps/lda-examples">lda-examples</a> repository.</p>
+
+<h3>Using Vagrant to start MongoDB and Nginx</h3>
+
+<p>If you plan to do more with LDA (for example, run all the examples, and start to play with it
+yourself) ather than installing and running MongoDB, the
+<a href="https://github.com/ld4apps/lda-examples">lda-examples</a> repository includes
+a Vagrantfile that can be used to start a MongoDB server as well as a properly configured
+Nginx reverse proxy server.</p>
+
+<p>Before you can use the supplied Vagrantfile, you first need to download/install the following:</p>
 
 <ol>
 <li><a href="http://docs.vagrantup.com/v2/installation/">Vagrant</a></li>
@@ -157,8 +188,8 @@ configured (see <strong>Note 1</strong>, below).</li>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>At this point the database server is running and ready for you to start playing with the
-<a href="https://github.com/ld4apps/lda-examples">examples</a>.</p>
+<p>At this point the mongodb and nginx servers are running and ready for you to start playing with
+all of the <a href="https://github.com/ld4apps/lda-examples">examples</a>. Have fun!</p>
 
 <h3>Note 1. Configure VirtualBox Host-Only Network (IP address 192.168.56.1)</h3>
 
@@ -241,7 +272,7 @@ machines seem to have this automatically (pre)configured.</p>
     
     	
         <li class="page">
-            <a href="/index.html">Getting Started</a>
+            <a href="/index.html">Introduction</a>
         </li>
         
     
