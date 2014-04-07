@@ -142,7 +142,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>As you can see, what this code basically does is load the LDA <em>utils.js</em> client libarary on line 5 (see <a href="https://github.com/ld4apps/lda-clientlib">lda-clientlib</a>) first, and then loads <em>application.html</em> on line 7, which is a file you will write. If you choose to use the LDA client libraries (which we recommend) your <em>application.html</em> must contain an html body, but no html header or body tags. Other than that, you can put whatever you like in it &ndash; it can load and execute whatever javascript libraries it likes, and include whatever html it likes. A very reasonable thing to do is to use the &lsquo;standard&rsquo; implementation of <em>application.js</em> shown above unmodified and consider <em>application.html</em> as being the real &lsquo;root&rsquo; of your UI application. This is, after all, the normal way you build a web or mobile application &ndash; it all starts with your root html file.</p>
+<p>As you can see, what this code basically does is load the LDA <em>utils.js</em> client libarary on line 5 (see <a href="https://github.com/ld4apps/lda-clientlib">lda-clientlib</a>) first, and then loads <em>application.html</em> on line 7, which is a file you will write. If you choose to use the LDA client libraries (which we recommend) your <em>application.html</em> must contain an html body, but no html header or body tags. Other than that, you can put whatever you like in it &ndash; it can load and execute whatever javascript libraries it likes, and include whatever html it likes. A very reasonable thing to do is to use the &lsquo;standard&rsquo; implementation of <em>application.js</em> shown above unmodified and consider <em>application.html</em> as being the real &lsquo;root&rsquo; of your UI application. This is, after all, the normal way you build a web or mobile application &ndash; it all starts with your root html file. We will explain more later on this.</p>
 
 <p>If you look at the &lsquo;Todo List&rsquo; application&rsquo;s version of <em>application.js</em>, you&rsquo;ll notice that it is slightly more complicated than the simplest &lsquo;standard&rsquo; one above. It looks like this:</p>
 
@@ -212,9 +212,6 @@
 <p>You can add todo entries to the list by entering them in the text field and pressing the &lsquo;Add Todo Item&rsquo; button:</p>
 
 <p><img src="images/image3.png" alt="" /></p>
-
-<p>If you close your browser and then come back later, you&rsquo;ll notice that the todo list is stored persistently. There is no need for an
-explicit save operation. Every item added to the list is automatically stored in the (MongoDB) database that you needed to start before running the sample.</p>
 
 <p>So, how is this application working? It all starts with the page initially returned from the todo server.
 If you look at the source of the &lsquo;todo list&rsquo; page:</p>
@@ -314,7 +311,7 @@ If you look at the source of the &lsquo;todo list&rsquo; page:</p>
 
 <p>This will be surprising to many HTML programmers. This looks nothing like the UI that was presented!</p>
 
-<p>The HTML returned from the todo sever (just like every LDA-based server) contains an RDFa representation of the data resource, <a href="http://localhost:3007/items">http://localhost:3007/items</a> in this case. This HTML does not attempt to render the information in any interesting way and even if it did, we are not using it. What happens instead is, on line 4 the todo application&rsquo;s <em>application.js</em> file (as described in the previous section) is loaded, which in turn loads another html file (<em>list.html</em> in this case) over top of it. [On our to-do list is to allow server developers to embellish the RDFa representation for search-engine optimization, but not to implement UI presentation.] What the user actually sees is the content provided by <em>list.html</em>.</p>
+<p>The HTML returned from the todo sever (just like every LDA-based server) contains an RDFa representation of the data resource, <a href="http://localhost:3007/items">http://localhost:3007/items</a> in this case. This HTML does not attempt to render the information in any interesting way and even if it did, we are not using it. What happens instead is, on line 3 the todo application&rsquo;s <em>application.js</em> file (as described in the previous section) is loaded, which in turn loads another html file (<em>list.html</em> in this case) over top of it. [On our to-do list is to allow server developers to embellish the RDFa representation for search-engine optimization, but not to implement UI presentation.] What the user actually sees is the content provided by <em>list.html</em>.</p>
 
 <p>[If you turn off javascript in the browser, you will actually see the RDFa rendered. There is also an environment variable you can set on the server that will generate more elaborate RDFa that actually does render itself in a more readable way if Javascript is off. This will not give you a reasonable UI for your application, but it can be useful/amusing for debugging or pedagogical purposes.]</p>
 
@@ -427,7 +424,7 @@ If you look at the source of the &lsquo;todo list&rsquo; page:</p>
 
 <p>From an &lsquo;understanding LDA&rsquo; perspective, the interesting parts are the two Javascript functions, <em>displayItems()</em> and <em>addItems()</em> on lines 12 and 19 respectively. As you can see, <em>displayItems()</em>, which is called when a resource of type <a href="http://open-services.net/ns/basicProfile#Container">http://open-services.net/ns/basicProfile#Container</a> (see application.js in previous section) is initially loaded, iterates over and displays the list of items that are found in something called APPLICATION_ENVIRON.initial_simple_jso.bp_members. Where did that come from, you ask?</p>
 
-<p>Recall that when <em>application.js</em> ran, it loaded the lda-clientlib utility library, <em>utils.js</em>, and then called an onload function in that library. The RDFa content in the HTML representation of the resource holds important information, but not in a format that is very friendly to Javascript programmers, so the utility onload function converts it to more usable Javascript objects in memory &ndash; a simple RDF format we refer to as &lsquo;simple JSO&rsquo; (JSO stands for JavaScript Objects, as in JSON, but without the N for Notation part) &ndash; which it then sets as a property called initial_simple_jso in a global variable called APPLICATION_ENVIRON. In this example, the &lsquo;simple JSO&rsquo; is that of an RDF container type (bp_Container) whose members are exposed in a field named &lsquo;bp_members&rsquo;.</p>
+<p>Recall that when <em>application.js</em> ran, it loaded the lda-clientlib utility library, <em>ld_utils.js</em>, and then called an onload function in that library. The RDFa content in the HTML representation of the resource holds important information, but not in a format that is very friendly to Javascript programmers, so the utility onload function converts it to more usable Javascript objects in memory &ndash; a simple RDF format we refer to as &lsquo;simple JSO&rsquo; (JSO stands for JavaScript Objects, as in JSON, but without the N for Notation part) &ndash; which it then sets as a property called initial_simple_jso in a global variable called APPLICATION_ENVIRON. In this example, the &lsquo;simple JSO&rsquo; is that of an RDF container type (bp_Container) whose members are exposed in a field named &lsquo;bp_members&rsquo;.</p>
 
 <p>To understand the representation of an actual item in the todo list, let&rsquo;s take a closer look at the <em>addItem()</em> function from <em>list.html</em>:</p>
 
@@ -472,7 +469,7 @@ If you look at the source of the &lsquo;todo list&rsquo; page:</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>The most interesting part is the call to <em>ld_util.send_create()</em> on line 11. This is a simple utiity function that does nothing more than set a couple of standard headers and send an HTTP POST message. The URL we send the post to is the first argument &ndash; &ldquo;&rdquo; &ndash; the null relative address, which is equivalent to <a href="http://localhost:3007/items,">http://localhost:3007/items,</a> since that is the url the browser is on. The object we send in the POST body also has its _subject set to the null relative address, but this address will be interpreted as being relative to the to-be-created resource, not the container we&rsquo;re POSTing to.</p>
+<p>The most interesting part is the call to <em>ld_util.send_create()</em> on line 11. This a simple utiity function that does nothing more than set a couple of standard headers and send an HTTP POST message. The URL we send the post to is the first argument &ndash; &ldquo;&rdquo; &ndash; the null relative address, which is equivalent to <a href="http://localhost:3007/items,">http://localhost:3007/items,</a> since that is the url the browser is on. The object we send in the POST body also has its _subject set to the null relative address, but this address will be interpreted as being relative to the to-be-created resource, not the container we&rsquo;re POSTing to.</p>
 
 <p>If the server responds with &lsquo;201 Created&rsquo; the todo text (stored in the dc_title field of the item) and the returned &lsquo;Location&rsquo; response header (the URL of the newly-created ressource) are passed to the <em>appendItem()</em> function which will add the new item to the list of items being displayed.</p>
 
@@ -480,12 +477,7 @@ If you look at the source of the &lsquo;todo list&rsquo; page:</p>
 
 <p><img src="images/image4.png" alt="" /></p>
 
-<p>All we are displaying here is a formatted representaion of the &lsquo;simple JSO&rsquo; for the todo item. The code that does this is in the file <em>item.html</em> (remember that our <em>application.js</em> loads the file <em>item.html</em> when the resource is a todo item).</p>
-
-<p>Notice that the displayed representation of a todo item includes a few more properties than the ones we POSTed in the <em>addItem()</em> function.
-These are properties that are automatically added and maintained by the LDA framework.</p>
-
-<p>In case you&rsquo;re curious, here is the implementation code for this view (in <em>lda-examples/todo/wsgi/static/todo/list.html</em>):</p>
+<p>All we are displaying here is a formatted representaion of the &lsquo;simple JSO&rsquo; for the todo item. The code that does this is in the file <em>item.html</em> (remember that our <em>application.js</em> loads the file <em>item.html</em> when the resource is a todo item). In case you&rsquo;re curious, here is the implementation code (in <em>lda-examples/todo/wsgi/static/todo/list.html</em>):</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -498,8 +490,7 @@ These are properties that are automatically added and maintained by the LDA fram
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>This is simply calling a convience method, in the <em>utils.js</em> clientlib, that returns a nicely formatted representation of
-of the &lsquo;simple JSO&rsquo; in APPLICATION_ENVIRON.initial_simple_jso.</p>
+<p>Notice that the displayed represntation of a todo item includes a few more properties than the ones we POSTed in the <em>addItem()</em> function. These properties are automatically added and maintained by the LDA framework.</p>
 
 <h3>Creating (POSTing) Resources</h3>
 
@@ -509,7 +500,7 @@ of the &lsquo;simple JSO&rsquo; in APPLICATION_ENVIRON.initial_simple_jso.</p>
 
 <h3>Deleting Resources</h3>
 
-<p>You may have noticed that the &lsquo;Todo List&rsquo; application&rsquo;s UI doesn&rsquo;t give you a way to delete items from the list. Because the todo server is using the fully-functional base implementation (of logic_tier.py), the server already supports DELETE. All that&rsquo;s needed is the UI part. Adding a delete button to the UI would be a simple enhancement, but we&rsquo;ll leave that as an excercise for the reader (hint: there is another convenient utility function in <em>utils.js</em> called <em>send_delete()</em>).</p>
+<p>You may have noticed that the &lsquo;Todo List&rsquo; application&rsquo;s UI doesn&rsquo;t give you a way to delete items from the list. Because the todo server is using the fully-functional base implementation (of logic_tier.py), the server already supports DELETE. All that&rsquo;s needed is the UI part. Adding a delete button to the UI would be a simple enhancement, but we&rsquo;ll leave that as an excercise for the reader (hint: there is another convenient utility function in ld_util.js called <em>send_delete()</em>).</p>
 
 <p>For now, and to prove that the application uses a true REST model, you can delete any item by simply sending an HTTP DELETE request to the item resource. For example, using curl, you can delete the first entry we created above by executing the following command:</p>
 
