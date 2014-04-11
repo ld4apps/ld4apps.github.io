@@ -90,19 +90,19 @@
 
 <h3>Your Business Logic</h3>
 
-<p>If you don&rsquo;t put any business logic in your server, you will still have a fully-functioning application that will store RDF entities that are POSTed, and respond to GET, PATCH and DELETE in the manner you would expect. [PUT is not supported &ndash; PUT is good for documents, but not a good match for data resources.] You have in effect a &lsquo;generic&rsquo; CRUD application for arbitrary RDF resources.</p>
+<p>If you don&rsquo;t put any business logic in your server, you will still have a fully-functioning application that will store RDF resources that are POSTed, and respond to GET, PATCH and DELETE in the manner you would expect. [PUT is not supported &ndash; PUT is good for documents, but not a good match for data resources.] You have in effect a &lsquo;generic&rsquo; CRUD application for arbitrary RDF resources.</p>
 
 <p>The most common kind of custom business logic does the following things:</p>
 
 <ol>
 <li> Implementation of validation of inputs on POST and PATCH</li>
 <li> Implementation of side-effects of POST and PATCH</li>
-<li> Addition of &lsquo;calculated&rsquo; properties to entities, usually on GET, but also on POST and PATCH</li>
-<li> Construction of &lsquo;calculated&rsquo; entities on GET</li>
+<li> Addition of &lsquo;calculated&rsquo; properties to resources, usually on GET, but also on POST and PATCH</li>
+<li> Construction of &lsquo;calculated&rsquo; resources on GET</li>
 </ol>
 
 
-<p>One of the most important types of &lsquo;calculated entities&rsquo; is list. Suppose in your data you have Carts and Items, and you record which items are in which shopping carts. One natural way to record this in the database is with a triple of the form &lsquo;itemURL is-in cartURL&rsquo;. This triple is most likely stored with the item. If this was all you did, clients would have to remember to include this triple every time they created an item, and clients would have to issue a database query to find all the items in a cart. While this would work, it is not very convenient. It would be more convenient if, for every cart whose url is U, there were a &lsquo;container&rsquo; resource whose url was U2 whose meaning was &lsquo;the items in U&rsquo;. A GET on this resource would return the list of items (including their properties) and a POST to this resource would create a new item for the cart. The &lsquo;container&rsquo; hides the detail of the query that must be executed as part of a GET. You would also want there to be a property of the resource at U that has the value of U2 so that you don&rsquo;t have to guess that URL. The &lsquo;Standard Business Logic&rsquo; library has helper methods that let you create U2 and the property of U that references it with a single line of code.</p>
+<p>One of the most important types of &lsquo;calculated resources&rsquo; is Container. Suppose in your data you have Carts and Items, and you record which items are in which shopping carts. One natural way to record this in the database is with a triple of the form &lsquo;itemURL is-in cartURL&rsquo;. This triple is most likely stored with the item. If this was all you did, clients would have to remember to include this triple every time they created an item, and clients would have to issue a database query to find all the items in a cart. While this would work, it is not very convenient. It would be more convenient if, for every cart whose url is U, there were a &lsquo;container&rsquo; resource whose url was U2 whose meaning was &lsquo;the items in U&rsquo;. A GET on this resource would return the list of items (including their properties) and a POST to this resource would create a new item for the cart. The &lsquo;container&rsquo; hides the detail of the query that must be executed as part of a GET. This kind of container is described in <a href="http://www.w3.org/TR/ldp/">Linked Data Platform</a>. You would also want there to be a property of the resource at U that has the value U2 so that you don&rsquo;t have to guess that URL. The &lsquo;Standard Business Logic&rsquo; library has helper methods that let you create U2 and the property of U that references it with a single line of code.</p>
 
 <h3>Standard WSGi Server</h3>
 
