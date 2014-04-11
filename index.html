@@ -87,19 +87,15 @@ systems &ndash; for example web- &hellip;">
   
   <p>LDA is a light-weight framework that helps developers design and implement integrated
 systems &ndash; for example web-sites &ndash; that are composed of multiple applications and can be easily deployed
-on clouds. An LDA-based application is a run-time component whose communication with the
-outside world is entirely through HTTP/REST &ndash; LDA applications communicate with each other by accessing the resources they
-expose.</p>
+on clouds.</p>
 
-<p>LDA helps you implement applications, but LDA is not focused on individual applications &ndash; there are
-lots of technologies for that &ndash; LDA targets coherent systems made up of
-multiple applications that talk to each other. Two other common approaches for solving
-this problem, a &lsquo;central repository&rsquo; approach and one that in recent years
-has come to be called &lsquo;SOA&rsquo;, have scalability issues that we believe the LDA
-approach overcomes.</p>
+<p>LDA helps you implement applications, but LDA&rsquo;s primary purpose is not implementing individual applications &ndash; there are
+lots of technologies for that &ndash; rather LDA helps implement coherent systems made up of
+multiple applications that talk to each other. LDA applications are system components that communicate entirely through HTTP/REST insterfaces.
+Two other common approaches for integrating applications, the &lsquo;central repository&rsquo; approach and the one that in recent years
+has come to be called &lsquo;SOA&rsquo;, have problems that we believe the LDA approach overcomes.</p>
 
-<p>The basic idea behind the use of Linked Data for integration is simple.
-We have seen that the regular HTML web is an extraordinary integrator.
+<p>We have seen that the regular HTML web is an extraordinary integrator.
 By embedding links &ndash; usually HTML anchor tags &ndash; inside pages, HTML
 enables the user of a browser to navigate to other pages without constraining in any way how those pages are implemented &ndash; they
 don&rsquo;t even have to be HTML. This integration does not require any sort of
@@ -110,13 +106,12 @@ simple idea has allowed the world-wide web to freely integrate
 commerce sites, blogs and micro-blogs, music sites, video sites, social
 networking sites, government sites, news sites and so on.</p>
 
-<p>The basic idea of integration
-using Linked Data is that if you just substitute a data model
+<p>The basic idea of Linked Data is that if you just substitute a data model
 (<a href="http://davetropeano.github.io/lda/what-is-this-rdf-thing/index.html">RDF</a>) for HTML and otherwise
 &lsquo;make like the world-wide web&rsquo;, then applications can achieve the same sort of easy and
-limitless integration that we see in the HTML web.
+limitless integration of data that we see for user interface in the HTML web.
 For this to work, we need to implement client applications that &lsquo;make like a browser&rsquo;
-and server applications that expose everything as linked resources. The LDA
+and server applications that expose everything as hypertext-linked resources. The LDA
 framework provides server-side and a client-side components that make it easy to
 create applications that follow exactly that pattern.</p>
 
