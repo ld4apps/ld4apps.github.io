@@ -1,0 +1,553 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>LDA Standard Subsystems - Linked Data for Applications (LDA)</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="LDA Standard Subsystems Mar 28th, 2014 The standard subsystems Our framework comes with 3 &lsquo;standard&rsquo; REST subsystems that provide &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ld4apps.github.io/standard-subsystems">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Linked Data for Applications (LDA)" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Linked Data for Applications (LDA)</a></h1>
+  
+    <h2>Composite Apps for the Cloud</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:ld4apps.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/blog/">Blog</a></li>
+  <li><a href="/blog/archives/">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">LDA Standard Subsystems</h1>
+    <p class="meta">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-28T15:09:00-04:00" pubdate data-updated="true">Mar 28<span>th</span>, 2014</time></p>
+  </header>
+  
+  <h2>The standard subsystems</h2>
+
+<p>Our framework comes with 3 &lsquo;standard&rsquo; REST subsystems that provide support for authentication, access control and multi-tenancy respectively. They are interesting because</p>
+
+<ol>
+<li> They provide capability that is shared across the whole system</li>
+<li> They are subsystems implemented with the frameworks themselves.</li>
+</ol>
+
+
+<p>If you deployed a system that used the standard subsystems, its logical topology would look like this:</p>
+
+<p><img src="images/image19.png" alt="" /></p>
+
+<p>If you were implementing a single shopping site, you might not care about the multi-tenancy subsystem &ndash; that one would be most useful if you were trying to implement a competitor to Shopify, BigCommerce or Volution.</p>
+
+<p>Here is another interesting topology that I believe would work fine, even though I have not tested it</p>
+
+<p><img src="images/image08.png" alt="" /></p>
+
+<p>In other words, subsystems can be shared across systems, and IBM, or someone else, could host standard subsystems for inclusion in other systems. (I should verify that this works.)</p>
+
+<h2>Authentication</h2>
+
+<p>The authentication subsystem implements login and logout for the whole system. Our current implementation allows systems to create their own accounts, which are stored in a database. Passwords are stored salted and hashed to meet normal security standards. A fuller implementation of the authentication subsystem would include much more including:</p>
+
+<ol>
+<li> integration with enterprise LDAP systems</li>
+<li> ability to login via Facebook, Google and other external sites</li>
+<li> for internally-managed accounts, confirmation of new accounts through email and the ability to reset passwords through email</li>
+<li> integration with newer mechanisms like OAuth2 and OpenID</li>
+</ol>
+
+
+<p>The important thing about the authentication subsystem is that it handles authentication for the whole system, so the other subsystems in the system do almost nothing for authentication. This is true even if the other subsystems are written using diverse languages and frameworks other than our own. This means that future development effort to address the above list only has to be done once. (It remains to be seen how an authentication system like WebID would fir.)</p>
+
+<p>Our authentication subsystem is not designed to replace industry-standard single sign-on systems. All the authentication system does is centralize the authentication handling for the system in one place, so the other subsystems can just implement business-logic and not have to worry about authentication. This only works because all the subsystems are running behind the reverse proxy so their resources are part of the same internet domain (or set of domains in a multi-tenant system). From an authentication point of view, this allows the whole system to run like one big monolithic application, even though it is implemented and deployed as multiple smaller subsystems. Industry-standard single sign-on mechanisms are still needed to integrate the system with others, but only the authentication subsystem has to deal with the technology to do that.</p>
+
+<p>Like every Linked Data application, the authentication subsystem itself is invisible &ndash; only the resources that it manages can be seen. Here are the important ones.</p>
+
+<h3>/account/login</h3>
+
+<p>/account/login is a well-known resource in the sense that its URL can be bookmarked. Our server implementation frameworks know this bookmark, and how and when to use it, so subsystems built with the implementation frameworks don&rsquo;t need to know it or use it. Server subsystems that are built without our framework need to know this URL &ndash; they will delegate to it in challenging users to login.</p>
+
+<p>/account/login is actually a family of resources &ndash; there is one in each tenant&rsquo;s domain in a multi-tenant system.</p>
+
+<p>If a REST subsystem wishes to challenge a user to login in response to a request that asked for HTML format, it returns a 401 response with the following body:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;html&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;header&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;script&gt;</span>
+</span><span class='line'>            <span class="nb">window</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">current</span> <span class="nx">url</span> <span class="nx">here</span><span class="o">&gt;</span><span class="p">;</span>
+</span><span class='line'>            <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span> <span class="o">=</span> <span class="s2">&quot;/account/login&quot;</span>
+</span><span class='line'>        <span class="nt">&lt;/script&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/header&gt;</span>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The browser will execute this script which will land the user in the login UI.</p>
+
+<p>If the original request asked for JSON, rather than HTML, this body will be returned instead:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span><span class="nt">&quot;http://ibm.com/ce/ns#login-page&quot;</span><span class="p">:</span> <span class="s2">&quot;/account/login&quot;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The programmatic client that sent the original request is expected to act appropriately, possibly by taking the user to the login resource&rsquo;s HTML representation, but perhaps instead by doing a programmatic login.</p>
+
+<p>If the REST subsystem is implemented using our server framework, all this behavior is handled automatically &ndash; the subsystem implementations just return the HTTP status code 401 (or 403) and the framework does the rest.</p>
+
+<p>Here is the representation of /account/login in simple JSON format:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="err">_subject:</span> <span class="nt">&quot;[http://localhost:3001/account/login](http://www.google.com/url?q=http%3A%2F%2Flocalhost%3A3001%2Faccount%2Flogin&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNGJ_yxwHDAgx8_hRyxuRxIXLu-YdA)&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="err">ce_registration__page:</span> <span class="err">URI([http://localhost:3001/account/new](http://www.google.com/url?q=http%3A%2F%2Flocalhost%3A3001%2Faccount%2Fnew&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNFfbDzXZXTIEjPshrK30eCVT4usKA)),</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="err">rdf_type:</span> <span class="err">URI([http://ibm.com/ce/ns#Login](http://www.google.com/url?q=http%3A%2F%2Fibm.com%2Fce%2Fns%23Login&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNG3fG7grXKA2pzF_836XkfP9ASz3A))</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see, the representation includes a link to the &lsquo;registration&rsquo; resource which allows you to create a new account either through the UI (if you ask for its HTML representation) or programmatically.</p>
+
+<p>Entering <a href="http://lda-example.org/account/login">http://lda-example.org/account/login</a> in the address field of a javascript-enabled browser will bring up a traditional login user interface.</p>
+
+<p>The way you login is by POSTing a data structure containing the account_id and password to this same /account/login resource. [If you are a user in the UI, the UI code will do this for you.] Of course, this POST should be done via https.</p>
+
+<p>If a login is successful, a session token is returned to the browser (as a cookie set in the response header) or to the programmatic client (in the body). In the case of the browser client, standard processing is to return the user to the place they were going before they got redirected to login. The session token is in JWT (<a href="http://www.google.com/url?q=http%3A%2F%2Ftools.ietf.org%2Fhtml%2Fdraft-ietf-oauth-json-web-token-13&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNE3-BpvUR_-uWuEVqz_iLqFvrq-ew">JSON Web Token</a>) format. Currently it is signed with a hash of a shared secret, but we will probably change that to a public/private key signature to avoid having to distribute shared secrets to subsystems. This is the format of the content portion of the JWT:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nt">&quot;user&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://martin-nally.name&quot;</span><span class="p">,</span>
+</span><span class='line'>     <span class="nt">&quot;exp&quot;</span>  <span class="p">:</span> <span class="s2">&quot;123345&quot;</span><span class="p">,</span>
+</span><span class='line'>     <span class="nt">&quot;disp&quot;</span> <span class="p">:</span> <span class="s2">&quot;Martin&quot;</span><span class="p">,</span>
+</span><span class='line'>     <span class="nt">&quot;acc&quot;</span>  <span class="p">:</span> <span class="s2">&quot;http://cloudapps4.me/account/1.2&quot;</span><span class="p">,</span>
+</span><span class='line'>     <span class="nt">&quot;fka&quot;</span>  <span class="p">:</span> <span class="s2">&quot;http://cloudapps4.me/anon/1.1&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>&lsquo;User&rsquo; is the URL of the current user (the JWT spec documents a field called ISS that may be intended for this purpose &ndash; the spec is hard to interpret). &lsquo;exp&rsquo; is the expiry time and is specified in the JWT spec. &lsquo;disp&rsquo; is the display name to use &ndash; it comes from the nickname or given name for the user recorded in the account. &lsquo;acc&rsquo; is the URL of the account and will only be set if the user has logged in. &lsquo;fka&rsquo; means &lsquo;formerly known as&rsquo; and will be set if the user was assigned a temporary URL prior to login.</p>
+
+<p>If you want to write a subsystem, but you don&rsquo;t want to use our implementation framework, you need to understand how to delegate to /account/login and how to recognize and verify the JWT session cookie.</p>
+
+<p>As is typical with session tokens, once a session token has been passed out, it is a sensitive property until it expires. By including that session token in requests, a client can access all the resources that the user associated with that session is allowed to access for the duration of the token. This means that if a token is stolen, it can be used maliciously until it expires. Use of https throughout is one way this exposure can be mitigated somewhat, but you still have to trust the clients (e.g. browsers) that hold the tokens not to divulge them. The good news is that tokens cannot realistically be counterfeited without having access to the account subsystem&rsquo;s private key (which is therefore an even hotter property).</p>
+
+<p>When a server subsystem receives a request with a session cookie, its job is simply to verify the signature and the expiry time and then proceed or reject the request. If the subsystem is implemented with our server framework, this verification is done automatically without the need for subsystem implementation participation.</p>
+
+<h3>/account/<id></h3>
+
+<p>Individual accounts are created by POSTing to <a href="http://www.google%20.com/url?q=http%3A%2F%2Flocalhost%3A3001%2Faccount%2Fnew&amp;sa=D&amp;sntz=1&amp;usg=AFQjC%20NFfbDzXZXTIEjPshrK30eCVT4usKA">/account/new</a>. This URL is not normally bookmarked &ndash; you can navigate to it from the /account/login resource.</p>
+
+<p>Our system differentiates between users and accounts. Users exist in the real world, but they do have URLs. Accounts represent a single system&rsquo;s knowledge of a particular user. Accounts have passwords, users have given names and family names. The same user can have many accounts on many systems. Currently we only allow a particular user (as identified by her URL) to have a single account per system, although we could relax that by demanding the password of the first account as part of the establishment of the second. When a resource in the system is created or updated, we record the user who did it, not the account. Similarly, access rights to resources are granted to users, not accounts. Focusing on users rather than accounts allows information to be aggregated across systems &ndash; the next level of integration &ndash; we consider this important. The terminology here can be confusing because of LDAP&rsquo;s tradition of using the word &lsquo;user&rsquo; for the thing we call an &lsquo;account&rsquo;. If you doubt that LDAP users are not really users, consider that LDAP users can only have a single password and ask yourself how well that models your life. Once you realize that an LDAP user is really a user&rsquo;s account on a particular system, things fall into place. Some users &ndash; not many &ndash; already have a URL to identify themselves, and we allow those users to enter their own URL. Mine is <a href="http://martin-nally.name">http ://martin-nally.name</a>. (This URL is reachable.) For users who don&rsquo;t already have an URL of their own, our system will assign one based on the email address given for the account.</p>
+
+<p>In multi-tenant systems, we offer two options for account management. Accounts can be managed centrally for all tenants by the host, or accounts may be managed by tenant. We&rsquo;re guessing that hosters like the former and tenants prefer the latter <g>. Hosters like Amazon and Shopify manage users centrally for all the stores they host.</p>
+
+<p>As with all REST subsystems, the account REST subsystem can run anywhere &ndash; we have run the account REST subsystem for a system without issues on one cloud while the domain logic for the same system runs on a whole different cloud.</p>
+
+<h2>Access Control</h2>
+
+<p>There are lots of simple designs for access control that would work to secure resources through the standard HTTP GET, PUT, PATCH, POST, DELETE interface. Slightly harder, but in our opinion necessary, is designing an access control mechanism that can be pushed down into database queries, so that database queries return only the information that the user has the right to see. In this document, we have not yet examined in detail the implementation of containers (collections) that we POST to &ndash; we&rsquo;ll get to that &ndash; so for the moment you can take my word for it that it depends heavily on query, and an approach to access control that could not be pushed down into the database would be problematic.</p>
+
+<p>Here is the conceptual model we implement for access control that can be pushed down into queries:</p>
+
+<p><img src="images/image20.png" alt="" /></p>
+
+<p>Resources are not secured individually, they are secured in groups. Each resource in the system has a property called ac_resource_group that must be set to the URL of its security group. A subsystem will commonly set the value of this property to point to one of its own resources, but this is not a requirement. A resource&rsquo;s ac_resource_group property may also be set to point to itself, in which case the resource forms its own group. For many subsystems it is obvious what groups to use. For example, in a bug-tracking system, by default at least, all defects in the same project might have the same access controls. If the bug-tracking system were implemented on our framework, it might set the ac_resource_group for each defect to reference its project. Other subsystems will have different ideas about what the groups should look like. Subsystems can even use URLs of resources outside the system to define resource groups.</p>
+
+<p>The access control subsystem manages resources of type User Group. A User Group lists a set of users, and specifies what rights they have to access and modify [the resources that are members of] specified resource groups.</p>
+
+<p>As always, the interface to the access control subsystem is specified entirely by the resources it exposes.</p>
+
+<h3>/ac/n.m</h3>
+
+<p>Resources whose URLs are of this form are the User Groups themselves. They are used to define who can access what. They are not normally bookmarked &ndash; you would navigate to them from another resource.</p>
+
+<p>User Groups are usually only accessed by the access control subsystem itself &ndash; for example through the UI provided to maintain them (this UI has yet to be written unfortunately).</p>
+
+<p>Here is a look at a User Group:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nt">&quot;_subject&quot;</span><span class="p">:</span> <span class="s2">&quot;[http://localhost:3001/ac/2.1](http://www.google.com/url?q=http%3 A%2F%2Flocalhost%3A3001%2Fac%2F2.1&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNEw134Ue6CmSIDEGV3VCRz SXjaBuw)&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&quot;rdf_type&quot;</span><span class="p">:</span> <span class="s2">&quot;URI([http://ibm.com/ce/ac/ns#UserGroup](http://www.google.com/url ?q=http%3A%2F%2Fibm.com%2Fce%2Fac%2Fns%23ACSpec&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNHwjmMT6l QISyZ_phIjHE6p2jnqKw))&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&quot;ac_who&quot;</span><span class="p">:</span> <span class="p">[</span>
+</span><span class='line'>        <span class="s2">&quot;URI([http://ce-admin-user.name](http://www.google.com/url?q=http%3A%2F%2Fce- admin-user.name%2F&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNHki_95xwfKxc32thU6np9ei4jjdg))&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;URI([http://martin-nally.name](http://www.google.com/url?q=http%3A%2F %2Fmartin-nally.name%2F&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNEuRSznENQE8mlTFJzt2btOWoh0PA))&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;URI([http://frank-budinsky.name](http://www.google.com/url?q=http%3A%2F %2Ffrank- budinsky.name%2F&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNHUBBnAXCPnS6dzHfq95nl9c6PQqw))&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;URI([http://dave-tropeano.name](http://www.google.com/url?q=http%3A%2F %2Fdave- tropeano.name%2F&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNGgBcihZcyhUVFQN1nNnnU3A44ciA))&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;URI([http://paul-matchen.name](http://www.google.com/url?q=http%3A%2F%2Fpaul- matchen.name%2F&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNFsqdMHLqi9dnN3v7TvbjSrM0-0lw))&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;URI([http://mark-archer.name](http://www.google.com/url?q=http%3A%2F%2Fmark- archer.name%2F&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNGB9LFVKA50P_rInaDwPfSsikdyPQ))&quot;</span>
+</span><span class='line'>    <span class="p">],</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&quot;ac_may&quot;</span><span class="p">:</span> <span class="p">[{</span>
+</span><span class='line'>        <span class="nt">&quot;_subject&quot;</span><span class="p">:</span><span class="s2">&quot;[http://localhost:3001/ac/2.1#permission_1](http://www.google.com /url?q=http%3A%2F%2Flocalhost%3A3001%2Fac%2F2.1%23permission_1&amp;sa=D&amp;sntz=1&amp;usg =AFQjCNFLAh3fWwwRlkCP-Qqha17QSpRGTw)&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&quot;ac_do&quot;</span><span class="p">:</span><span class="mi">63</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&quot;ac_to&quot;</span><span class="p">:[</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="s2">&quot;URI([http://localhost:3001/](http://www.google.com/url?q=http%3A%2F%2Flocalho st%3A3001%2F&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNFAHW1ci6qp9G2EtI-FWj-6r_yx0g))&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s2">&quot;URI([http://localhost:3001/mt/cloudsupplements](http://www.google.com/url?q=h ttp%3A%2F%2Flocalhost%3A3001%2Fmt%2Fcloudsupplements&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNEX6 SORY4Haju9fLUt3Hr4hsz7p1w))&quot;</span>
+</span><span class='line'>        <span class="p">]}</span>
+</span><span class='line'>    <span class="p">],</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&quot;ce_modificationCount&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;ce_owner&quot;</span><span class="p">:</span><span class="s2">&quot;URI([http://ce-admin- user.name](http://www.google.com/url?q=http%3A%2F%2Fce-admin- user.name%2F&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNHki_95xwfKxc32thU6np9ei4jjdg))&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;dc_creator&quot;</span><span class="p">:</span><span class="s2">&quot;URI([http://ce-admin- user.name](http://www.google.com/url?q=http%3A%2F%2Fce-admin- user.name%2F&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNHki_95xwfKxc32thU6np9ei4jjdg))&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;dc_created&quot;</span><span class="p">:</span><span class="s2">&quot;Date(2013-12-18T19:44:44.855Z)&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;ce_lastModifiedBy&quot;</span><span class="p">:</span><span class="s2">&quot;URI([http://ce-admin- user.name](http://www.google.com/url?q=http%3A%2F%2Fce-admin- user.name%2F&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNHki_95xwfKxc32thU6np9ei4jjdg))&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;ce_allVersions&quot;</span><span class="p">:</span><span class="s2">&quot;URI([http://localhost:3001/ac/2.1/allVersions](http://www.g oogle.com/url?q=http%3A%2F%2Flocalhost%3A3001%2Fac%2F2.1%2FallVersions&amp;sa=D&amp;sn tz=1&amp;usg=AFQjCNF1SMKUcPW6Z9SGLGC-ec7MfnUlbQ))&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nt">&quot;ce_lastModified&quot;</span><span class="p">:</span><span class="s2">&quot;Date(2013-12-18T19:44:44.855Z)&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>User Groups are themselves resources in resource groups secured by other User Groups, so there is actually another property I have omitted above:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="s2">&quot;ac_resource__group&quot;</span><span class="err">:</span> <span class="s2">&quot;URI([http://localhost:3001/](http://localhost:3001/))&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Even I find this recursive use of resource groups confusing every time I come back to this topic, so I omitted it for clarity, but it is important. This is how you control who can alter particular UserGroups, thereby granting permissions to others.</p>
+
+<p>The value of ac_do is an integer whose bits define what people can do. 63 is all-bits-on, which means they can do everything.</p>
+
+<p>The value of ac_to defines which resource groups the User Group is giving permissions to.</p>
+
+<h3>/ac-permissions?resource_group&amp;user</h3>
+
+<p>These are the resources used by the subsystems of the system to decide whether an individual GET, POST, PATCH, DELETE operation may be performed. If the subsystem is implemented using our server-side framework, this is done automatically without the programmer needing to do anything (there is an environment variable that controls whether or not access control is to be enforced).</p>
+
+<p>The meaning of each resource in this family of resources is &lsquo;the level of permission that the specified user has to operate on [resources of] the specified resource group&rsquo;. The representation of these resources is a single integer whose bits represent the granted permissions (read, create, update, delete etc). These resources are bookmarkable and cacheable, and their URLs are usually composed by clients from a known resource_group URL and known user URL. These resources are &lsquo;derived resources&rsquo; that contain no original information &ndash; they are calculated by database queries over the underlying UserGroups in the access control subsystem implementation. The user URL may be omitted in which case it defaults to the user associated with the current session. The resource_group URL must always be provided in the query string.</p>
+
+<p>These resources are amongst the few we have whose primary usage pattern requires the client to compose a URL from fragments. The reason that we use URL-composition to access these resources is that it is difficult to find a resource we own from which to link to them. You could even argue that this looks a bit like a SOA interface where /ac-permissions is the URL of the SOA method and &lt;resource_group> and <user> are the method arguments. However, in our system, /ac-permissions is not a valid URL (in the sense that a GET will return 404) and each resource whose URL is of the form /ac- permissions?&lt;resource_group>&amp;<user> is treated as a full entity that has its own representation and its own cache-control response headers.</p>
+
+<h3>/ac-resource-groups?user</h3>
+
+<p>These are the resources used by the subsystems to push access control permissions down into database queries. If the subsystem is performing a query whose selection clause is &lsquo;WHERE x = y&rsquo;, it should augment the selection clause to be &lsquo;WHERE x = y AND ac_resource_group IN <list of ac resource groups>&rsquo;, where the list of ac resource groups is found in the representation of one of these resources. If the subsystem is implemented using our server- side framework, this is done automatically without the subsystem programmer needing to do anything. (There is a server environment variable that controls whether or not access control is to be enforced.)</p>
+
+<p>We do not assume relational database technology &ndash; other database technologies support selection filters too. Our current implementation is on top of MongoDB.</p>
+
+<p>The meaning of each resource in this family of resources is &lsquo;the collection of resource groups to which the given user has at least read access&rsquo;. The representation of these resources is a simple array of URLs. These resources are bookmarkable and cacheable, and their URLs are usually composed by clients from a known user URL. The user URL may be omitted in which case it defaults to the user associated with the current session. These resources are &lsquo;derived resources&rsquo; that are calculated by database queries over the UserGroups in the access control subsystem implementation.</p>
+
+<h3>/ac?resource_group&amp;user</h3>
+
+<p>Although they are implemented, I don&rsquo;t think we have a clear use for these resources currently.</p>
+
+<p>The meaning of each resource in this family of resources is &lsquo;the collection of User Groups that reference the given resource_group and user&rsquo;. These resources are bookmarkable, and their URLs are expected to be composed by clients from a known resource_group URL and user URL. These resources are calculated by queries in the implementation. The user URL may be omitted, in which case the user from the current session is used. The resource_group may also be omitted in which case all resource specs that reference the user are returned &ndash; this is the equivalent of asking what user groups the user is in.</p>
+
+<h3>Access Control application availability</h3>
+
+<p>When access control is enabled, subsystems have to access the access control subsystem&rsquo;s resources to process requests. This means that if the access control subsystem is down or unreachable, the whole system stops. It would be interesting to explore how some of the Netflix OSS Hystrix techniques &ndash; suitably ported to Python &ndash; could be used to improve this situation.</p>
+
+<h2>Multi-tenancy</h2>
+
+<p>In our definition, multi-tenancy refers to the ability of a single installation of a system of subsystems to manage parallel independent webs of resources, each web belonging to a different HTTP domain. For example, the same installation of shopping-site software might simultaneously support multiple online stores each with its own domain name (e.g. &lsquo;gardendecorations.com&rsquo; and &lsquo;webvitamins.com&rsquo;) and completely different inventory and orders.</p>
+
+<p>Our model for multi-tenancy is analogous to the popular board game &lsquo;Monopoly&rsquo;. If you are the hoster, you own the entire board and the bank. Atlantic City, New Jersey, is credited with being the original Monopoly variation, so lets assume the hoster&rsquo;s domain is <a href="http://www.google.com/url?q=ht%20tp%3A%2F%2Fac.com&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNH1-p-pM_SKZgHxevnjTPlZfSZTcQ">http://acnj.com</a>. Players buy properties on the hoster&rsquo;s board. In our current code, properties are called &lsquo;sites&rsquo;. In a slight departure from the Monopoly model, customers in our game get to name their own sites. Each site corresponds to an internet domain name. Let&rsquo;s assume I create the site &lsquo;boardwalk&rsquo; at <a href="h%20ttp://www.google.com/url?q=http%3A%2F%2Fac.com&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNH1-p-pM_S%20KZgHxevnjTPlZfSZTcQ">http://acnj.com</a>. Our framework will allocate <a href="http://www.google.com/url?q=http%3A%2F%2Fboardwalk.ac.com&amp;sa=D&amp;sntz=1&amp;usg=AFQj%20CNE82pbDDSgybQnDSsxvaDYM9inS_g">http://boardwalk.acnj.com</a> to the new site, although we assume it is likely that the customer will also buy <a href="http://www.googl%20e.com/url?q=http%3A%2F%2Fboardwalk.com&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNFXUTgxRbbyr5oyPqx%20wkbCFLhcCWQ">http://boardwalk.com</a> from an internet registrar and use that domain in preference. [Bringing your own domain name like this isn&rsquo;t implemented yet in our code &ndash; it is on our to-do list.] Once they own a site, customers can put improvements on it. In the board game as I remember it, there are only two types of improvement you can add &ndash; houses and hotels. In our hosting game, the sorts of improvements you can add are more varied, depending on the software that a hoster has installed. Examples might be:</p>
+
+<ol>
+<li> online stores</li>
+<li> blogs</li>
+<li> online banks</li>
+<li> online travel agencies</li>
+<li> &hellip; anything else you have written subsystems to support</li>
+</ol>
+
+
+<p>These different &lsquo;types&rsquo; of improvements are called capabilities in our framework. A capability is really just an installed subsystem that has been flagged as representing tenant-meaningful function. Capabilities are installed centrally on the board at the bank and are visible to all sites. As in the board game, you can put multiple improvements of the same type on the same site &ndash; whether you add a second online store to an existing site or put it on a new site is really a branding issue for the customer. For example, some retailers like to keep their discount store under the same brand (e.g. <a href="http://rei.com">http://rei.com</a> and <a href="http://rei.com/outlet">http://rei.com/outlet</a>) while others prefer to keep separate store brands for different price-points (e.g. Macy&rsquo;s and Bloomingdale&rsquo;s).</p>
+
+<p>When a subsystem is running in our framework, it will get both a tenant id and a capability id with each HTTP request. In the current code, if the incoming URL is <a href="http://www.google.com/url?q=http%3%20A%2F%2Fboardwalk.ac.com%2Fshop%2F2.3&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNHMZrr91Z5fKukzErd-%202k7fSqVO7A">http://boardwalk.acnj.com/shop/2.3</a>, then the capability id is &lsquo;shop&rsquo; and the tenant id is &lsquo;boardwalk&rsquo;. Our default implementation will create a separate MongoDB collection for each tenant/capability pair. If there are multiple shops on the same site, they will share a single MongoDB collection for storage &ndash; the different shops are kept apart by linkages in the resources. Everything to do with a shop &ndash; it&rsquo;s orders, catalogs, products, etc. will go into the same &lsquo;shop&rsquo; collection (unless they are implemented by a different capability). Different sites never share storage collections, so it is unlikely that we would ever accidentally give one tenant&rsquo;s data to another. It is possible for two different types of improvement on the same site to share a collection, and even to share resources, although this is not the default behavior.</p>
+
+<p>The multi-tenancy subsystem allows customers to create and manage their sites and to add improvements. The management of a particular improvement &ndash; for example a store, its products, orders, inventory etc. &ndash;  is done through the capability that created it, not by the multi-tenancy app.</p>
+
+  
+    <footer>
+      <p class="meta">
+        
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-28T15:09:00-04:00" pubdate data-updated="true">Mar 28<span>th</span>, 2014</time>
+        
+      </p>
+      
+        <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ld4apps.github.io/standard-subsystems/index.html" data-via="" data-counturl="http://ld4apps.github.io/standard-subsystems/index.html" >Tweet</a>
+  
+  
+  
+</div>
+
+      
+    </footer>
+  
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Guides</h1>
+  <ul id="Pages">
+    
+    	
+    	
+    
+    	
+    	
+    
+    	
+    	
+    
+    	
+        <li class="page">
+            <a href="/developing-lda-applications/index.html">Developing LDA Applications</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/downloading-the-software/index.html">Downloading the Software</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/index.html">Welcome to LDA</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/lda-client-libraries/index.html">LDA Client Libraries</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/lda-server-libraries/index.html">LDA Server Libraries</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/mpnally-tutorial/index.html">Original Mpnally Tutorial</a>
+        </li>
+        
+    
+    	
+    	
+    
+    	
+        <li class="page">
+            <a href="/standard-subsystems/index.html">LDA Standard Subsystems</a>
+        </li>
+        
+    
+    	
+        <li class="page">
+            <a href="/what-is-this-rdf-thing/index.html">What Is This RDF Thing?</a>
+        </li>
+        
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/ld4apps">@ld4apps</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'ld4apps',
+            count: 20,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
