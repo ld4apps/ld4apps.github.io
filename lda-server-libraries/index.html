@@ -9,7 +9,7 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="LDA Server Libraries Apr 2nd, 2014 The following diagram attempts to explain the overall structure of the framework Standard WSGi Server The &lsquo; &hellip;">
+  <meta name="description" content="LDA Server Libraries Apr 2nd, 2014 The following diagram attempts to explain the overall structure of the framework Your Business Logic If you don& &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -88,6 +88,22 @@
 
 <p><img src="images/image12.png" alt="" /></p>
 
+<h3>Your Business Logic</h3>
+
+<p>If you don&rsquo;t put any business logic in your server, you will still have a fully-functioning application that will store RDF resources that are POSTed, and respond to GET, PATCH and DELETE in the manner you would expect. [PUT is not supported &ndash; PUT is good for documents, but not a good match for data resources.] You have in effect a &lsquo;generic&rsquo; CRUD application for arbitrary RDF resources.</p>
+
+<p>The most common kind of custom business logic does the following things:</p>
+
+<ol>
+<li> Implementation of validation of inputs on POST and PATCH</li>
+<li> Implementation of side-effects of POST and PATCH</li>
+<li> Addition of &lsquo;calculated&rsquo; properties to resources, usually on GET, but also on POST and PATCH</li>
+<li> Construction of &lsquo;calculated&rsquo; resources on GET</li>
+</ol>
+
+
+<p>One of the most important types of &lsquo;calculated resources&rsquo; is Container. Suppose in your data you have Carts and Items, and you record which items are in which shopping carts. One natural way to record this in the database is with a triple of the form &lsquo;itemURL is-in cartURL&rsquo;. This triple is most likely stored with the item. If this was all you did, clients would have to remember to include this triple every time they created an item, and clients would have to issue a database query to find all the items in a cart. While this would work, it is not very convenient. It would be more convenient if, for every cart whose url is U, there were a &lsquo;container&rsquo; resource whose url was U2 whose meaning was &lsquo;the items in U&rsquo;. A GET on this resource would return the list of items (including their properties) and a POST to this resource would create a new item for the cart. The &lsquo;container&rsquo; hides the detail of the query that must be executed as part of a GET. This kind of container is described in <a href="http://www.w3.org/TR/ldp/">Linked Data Platform</a>. You would also want there to be a property of the resource at U that has the value U2 so that you don&rsquo;t have to guess that URL. The &lsquo;Standard Business Logic&rsquo; library has helper methods that let you create U2 and the property of U that references it with a single line of code.</p>
+
 <h3>Standard WSGi Server</h3>
 
 <p>The &lsquo;Standard WSGi Server&rsquo; code of the framework has the following functions:</p>
@@ -95,7 +111,7 @@
 <ol>
 <li> Accept requests from users. Any request body is expected to be in any one of many RDF formats, including RDF/JSON and &lsquo;simple JSON&rsquo;. (If you use our client library, it will almost always use the RDF/JSON format)</li>
 <li> Translate the request body to a set of Python objects &ndash; dictionaries, arrays and literal values. The organization of these Python objects matches the organization of the RDF/JSON serialization format, regardless of the original serialization format.</li>
-<li> Call the appropriate Business Logic Layer function &ndash; create(), get(), update(), delete(), transform() and action(). Create, get, update and delete should be self-explanatory. transform is a form of POST that does not create a new thing, and is &lsquo;safe&rsquo; (no side-effects) in the technical sense of &lsquo;safe&rsquo; as described in the HTTP spec. Transform takes a resource representation on input and produces another on output. Query processors are an example of transforms. A fahrenheit to centigrade converter would be another. We currently model login as a transform. Action is a POST with side-effects. Logout is modelled as an action.</li>
+<li> Call the appropriate Business Logic Layer function &ndash; create(), get(), update(), delete(), transform() and action(). Create, get, update and delete should be self-explanatory. Transform is a form of POST that does not create a new thing, and is &lsquo;safe&rsquo; (no side-effects). Transform takes a resource representation on input and produces another on output. Query processors are an example of transforms. A Fahrenheit to centigrade converter would be another. We currently model login as a transform. Action is a POST with side-effects. Logout is modelled as an action.</li>
 <li> Return a result. The business logic layer will return a status code, a set of RDF/JSON-structured python objects and potentially headers. The standard server will convert those python objects into the representation that was requested by the client. This includes HTML &ndash; the only HTML that ever comes out the server is RDFa HTML calculated mechanically by the standard server from RDF/JSON-structured python objects. [Errors are not in RDF format &ndash; they are an array of pairs].</li>
 </ol>
 
@@ -112,7 +128,7 @@
 <li> Taking a DELETE request from the WSGi server and translating it into a delete of a single entity on the storage system.</li>
 <li> Taking a PATCH request from the WSGi server and translating it into an update of an entity on the storage system. The representation of the to-be-created resource is RDF</li>
 <li> Taking a transform (POST) request from the WSGi server and translating it into query on the storage system. The representation of the query resource is structured like RDF/JSON with some tweaks (see the section on query) and the result is pure RDF.</li>
-<li> Providing a default implementation of &lsquo;virtual&rsquo; container resources that are calculated from queries. This includes the ability to POST to these resources as well as to GET them. It also includes augmenting the representation of other resources to point to these virtual resources. (Note to self &ndash; should this not be in a library that can be used without having to subclass?)</li>
+<li> Providing a default implementation of &lsquo;calculated&rsquo; container resources that are constructed from queries. This includes the ability to POST to these resources as well as to GET them. It also includes augmenting the representation of other resources to point to these virtual resources.</li>
 <li> Augmenting each resource with a reference to a &lsquo;virtual&rsquo; container that lists the historic versions of the resource.</li>
 </ol>
 
@@ -223,6 +239,12 @@
     
     	
     	
+    
+    	
+        <li class="page">
+            <a href="/standard-subsystems/index.html">LDA Standard Subsystems</a>
+        </li>
+        
     
     	
         <li class="page">
