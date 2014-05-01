@@ -162,6 +162,49 @@ of the architecture and patterns that LDA is encouraging and why.</p>
 
 <p>You can contact us, ask questions, get involved, etc., by posting github issues or asking question on Stack Overflow &hellip;</p>
 
+<h2>Summary of features and capabilities</h2>
+
+<ol>
+<li> Provides a set of protocols for multiple RESTful applications &ndash; we call them subsystems &ndash; to be seamlessly integrated in a single system behind a reverse proxy.</li>
+<li> Provides a set of optional &lsquo;standard&rsquo; subsystems that implement common functions for the whole system. These include:
+
+<ol>
+<li>Authentication</li>
+<li>Access Control</li>
+<li>Multi-tenancy</li>
+</ol>
+</li>
+<li> Provides an optional server-side implementation framework for building individual subsystems within the system.
+
+<ol>
+<li>Implements POST, GET, PATCH and DELETE http methods and translates them into CRUD operations on a database. Allows programmers to override these standard method behaviors in any way they choose. Commonly this is done to implement validations on data, augment resources beyond the data stored for them in the database, interface with external services, fabricate resources that are not stored in the database, implement side-effects and so on.</li>
+<li>Implements a strict separation of business logic from UI presentation logic such that all presentation logic is executed on the client and the server contains only business logic.</li>
+<li>Allows each subsystem to use its own database, and even its own database technology, or optionally to share.</li>
+<li>Ensures that all externally-visible pointers and identifiers are in the form of opaque HTTP URLs &ndash; no database keys or other local-scope identifiers are externally visible.</li>
+<li>Ensures the resilience of database data in the face of server rename. All references in databases to resources in the same system &ndash; even on different machines &ndash; are stored in relative form.</li>
+<li>Detects optimistic concurrency collisions on resource updates and helps clients recover.</li>
+<li>Accepts and produces data in a number of different formats &ndash; the most commonly-used are a nested JSON format (for programmers) and HTML/RDFa (for the browser)</li>
+<li>Allows flexible query on the stored data with the results exposed as Linked Data resources. The queries are also Linked Data resources.</li>
+<li>Implements Linked Data Basic Profile Containers via query on underlying resources. (Pagination of Containers is still a to-do).</li>
+<li>Tracks version history of all resources</li>
+<li>Interfaces with the authentication subsystem for login/logout</li>
+<li>Interfaces with the access control subsystem to secure resources</li>
+<li>Interfaces with the multi-tenancy subsystem to support multiple tenants</li>
+</ol>
+</li>
+<li> Provides helper methods for writing javascript clients that exercise the REST interface of the system.
+
+<ol>
+<li>Supports &lsquo;single-page applications&rsquo; (SPAs) on both web browsers and mobile devices. Ensures a search-engine-optimizable, bookmarkable, HTML representation for each resource of the system.</li>
+<li>Translates between various data formats on the client</li>
+<li>Calculates minimum patches for updating data</li>
+<li>Calculates and displays version-history differences</li>
+<li>Provides some simple methods for exercising the REST methods from the client</li>
+</ol>
+</li>
+</ol>
+
+
   
     <footer>
       <p class="meta">
