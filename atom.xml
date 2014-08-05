@@ -4,7 +4,7 @@
   <title><![CDATA[Linked Data for Applications (LDA)]]></title>
   <link href="http://ld4apps.github.io/atom.xml" rel="self"/>
   <link href="http://ld4apps.github.io/"/>
-  <updated>2014-05-01T11:23:54-04:00</updated>
+  <updated>2014-08-04T22:51:16-04:00</updated>
   <id>http://ld4apps.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,21 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[UCI Students Utilize LDA for Their Senior Project]]></title>
+    <link href="http://ld4apps.github.io/blog/2014/07/02/uci-students-adopt-lda/"/>
+    <updated>2014-07-02T17:00:00-04:00</updated>
+    <id>http://ld4apps.github.io/blog/2014/07/02/uci-students-adopt-lda</id>
+    <content type="html"><![CDATA[<p>We&rsquo;re pleased to announce that a group of students at the University of California, Irvine are using Linked Data for Applications as the framework to build their senior project with.</p>
+
+<p>Over the last few months the students have been working on building their application, a project management tool dubbed UBO.  They reached their first milestone in June when they presented their MVP to their professors and project sponsors.  The demonstration included showing functioning authentication, access control, integration with third-parties via OAuth, and a REST API.  Many of these features were the direct result of implementing UBO on top of LDA.</p>
+
+<p>Over the course of this summer and the next 2 quarters the group plans to explore additional features of the LDA framework such as its novel approach to access control, its ability to easily distribute an application across many servers,  and its built-in change-tracking to allow users to see who changed what when and roll back those changes if needed.</p>
+
+<p>We&rsquo;re looking forward to working with the students to help them build a modern, scalable, web 2.0 application and getting their help in advancing the LDA framework.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Hello World]]></title>

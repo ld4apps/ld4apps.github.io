@@ -2,50 +2,54 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://ld4apps.github.io/blog/2014/04/02/hello-world/</loc>
-        <lastmod>2014-04-02T15:30:43-04:00</lastmod>
+        <lastmod>2014-04-02T23:01:15-04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://ld4apps.github.io/blog/2014/07/02/uci-students-adopt-lda/</loc>
+        <lastmod>2014-08-04T22:40:29-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/blog/archives/</loc>
-        <lastmod>2014-04-02T15:30:43-04:00</lastmod>
+        <lastmod>2014-08-04T22:40:29-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/blog/</loc>
-        <lastmod>2014-04-02T15:30:43-04:00</lastmod>
+        <lastmod>2014-08-04T22:40:29-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/developing-lda-applications/</loc>
-        <lastmod>2014-04-10T20:04:04-04:00</lastmod>
+        <lastmod>2014-04-11T09:32:19-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/downloading-the-software/</loc>
-        <lastmod>2014-04-29T18:04:32-04:00</lastmod>
+        <lastmod>2014-04-25T11:05:19-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/</loc>
-        <lastmod>2014-05-01T11:22:33-04:00</lastmod>
+        <lastmod>2014-05-19T00:02:11-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/lda-client-libraries/</loc>
-        <lastmod>2014-04-11T19:40:20-04:00</lastmod>
+        <lastmod>2014-04-14T13:54:18-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/lda-server-libraries/</loc>
-        <lastmod>2014-04-11T19:55:26-04:00</lastmod>
+        <lastmod>2014-04-14T13:54:18-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/mpnally-tutorial/</loc>
-        <lastmod>2014-04-02T16:18:55-04:00</lastmod>
+        <lastmod>2014-04-02T23:01:15-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/robots.txt</loc>
-        <lastmod>2014-04-02T15:30:43-04:00</lastmod>
+        <lastmod>2014-03-28T08:53:34-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/standard-subsystems/</loc>
-        <lastmod>2014-04-24T20:04:23-04:00</lastmod>
+        <lastmod>2014-04-25T10:50:45-04:00</lastmod>
     </url>
     <url>
         <loc>http://ld4apps.github.io/what-is-this-rdf-thing/</loc>
-        <lastmod>2014-04-11T20:16:35-04:00</lastmod>
+        <lastmod>2014-04-14T13:54:18-04:00</lastmod>
     </url>
 </urlset>
